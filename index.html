@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo Senderos · Equipo Terapéutico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  /* Tecknicam: verde de marca, con un color por sección */
+  --bg:#f2f3f5; --surface:#ffffff; --surface-2:#e9ebef; --ink:#15171c; --muted:#5a616c; --line:#d7dae0;
+  --a:#2f7d1f; --b:#1f5fbf; --c:#b4531a; --d:#6b3fb3; --on-accent:#ffffff;
+  --ok:#1d7448; --warn:#9a6412; --crit:#b42318;
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r:10px; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121418;--surface:#1a1d22;--surface-2:#24282f;--ink:#eceef1;--muted:#a4abb5;--line:#30353d;--a:#7bd65a;--b:#6aa4ff;--c:#f08a4b;--d:#b48cf2;--on-accent:#101216;--ok:#4fc68e;--warn:#e3a94b;--crit:#f26a5f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121418;--surface:#1a1d22;--surface-2:#24282f;--ink:#eceef1;--muted:#a4abb5;--line:#30353d;--a:#7bd65a;--b:#6aa4ff;--c:#f08a4b;--d:#b48cf2;--on-accent:#101216;--ok:#4fc68e;--warn:#e3a94b;--crit:#f26a5f;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);font-weight:800;letter-spacing:-.01em;text-wrap:balance;margin:0;line-height:1.2}
+h2{font-size:18px} p{margin:0}
+.muted{color:var(--muted)} .small{font-size:13px}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--m,var(--b)) 55%,transparent);outline-offset:2px}
+header.top{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{max-width:1200px;margin:0 auto;padding:10px 16px 0;display:flex;flex-direction:column;gap:6px}
+.brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cmyk{display:grid;grid-template-columns:repeat(2,11px);gap:2px}
+.cmyk i{width:11px;height:11px;display:block;border-radius:2px}
+.brand h1{font-size:19px}
+.brand .sub{color:var(--muted);font-size:12.5px}
+.flag{margin-left:auto;font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:999px;padding:3px 10px}
+nav.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tab{appearance:none;border:0;background:none;font:600 14px var(--body);color:var(--muted);padding:9px 12px 10px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:7px}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--tc)}
+.k{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 5px;border-radius:6px;background:var(--tc);color:var(--on-accent);font:800 12px var(--display)}
+.cnt{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--crit);color:#fff;font-size:11.5px;font-weight:700}
+main{max-width:1200px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:14px}
+.intro{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-left:4px solid var(--m);background:var(--surface);border-radius:var(--r)}
+.intro p{color:var(--muted);max-width:80ch}
+.mb{display:inline-grid;place-items:center;width:28px;height:28px;flex:none;border-radius:7px;background:var(--m);color:var(--on-accent);font:800 14px var(--display)}
+.grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.cardhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 14px var(--body);padding:8px 13px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;line-height:1.25;text-align:center}
+.btn:hover{border-color:var(--m)}
+.btn.primary{background:var(--m);border-color:var(--m);color:var(--on-m,var(--on-accent))}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.big{padding:12px 16px;font-size:15px;width:100%}
+.btn.mp{background:#009ee3;border-color:#009ee3;color:#fff;width:100%;padding:12px;font-size:15px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.sm{padding:5px 10px;font-size:13px}
+.in{font:500 15px var(--body);padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%;min-width:0}
+.in:focus{border-color:var(--m)}
+select.in{appearance:auto}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);font-weight:600}
+label.chk{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border:1px solid var(--line);border-radius:8px;cursor:pointer}
+label.chk input{margin-top:3px;accent-color:var(--m);width:17px;height:17px}
+label.chk small{display:block;color:var(--muted)}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
+.opt{text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;cursor:pointer;color:var(--ink);font:inherit;display:flex;flex-direction:column;gap:2px}
+.opt small{color:var(--muted);font-size:12.5px}
+.opt[aria-pressed="true"]{border-color:var(--m);box-shadow:inset 0 0 0 1px var(--m);background:color-mix(in srgb,var(--m) 8%,var(--surface))}
+h2 .n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--m);color:var(--on-accent);font-size:13px;margin-right:8px;vertical-align:2px}
+.lines{list-style:none;margin:0;padding:0}
+.line{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}
+.pname{font-weight:600;display:block}
+.ppres{font-size:13px;color:var(--muted);display:block}
+.empty{color:var(--muted);padding:12px 2px}
+.x{border:0;background:none;color:var(--muted);cursor:pointer;font-size:13px;text-decoration:underline;padding:2px}
+.sumrow{display:flex;justify-content:space-between;gap:10px;font-variant-numeric:tabular-nums}
+.tot{display:flex;justify-content:space-between;gap:10px;font:800 21px var(--display);font-variant-numeric:tabular-nums;padding-top:4px}
+.timer{font-size:13px;font-weight:700;color:var(--m);font-variant-numeric:tabular-nums;border:1px solid color-mix(in srgb,var(--m) 40%,var(--line));padding:2px 9px;border-radius:999px}
+.hook{font-size:13.5px;border-left:3px solid var(--m);padding:6px 10px;background:color-mix(in srgb,var(--m) 7%,var(--surface))}
+.done{border:1px solid color-mix(in srgb,var(--ok) 45%,var(--line));background:color-mix(in srgb,var(--ok) 7%,var(--surface));border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.msg{white-space:pre-wrap;font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--surface-2);padding:10px;border-radius:8px;max-height:200px;overflow:auto;margin:0}
+.notice{font-size:13px;padding:8px 10px;border-radius:8px;background:color-mix(in srgb,var(--warn) 12%,var(--surface));color:var(--ink);border:1px solid color-mix(in srgb,var(--warn) 35%,var(--line))}
+/* plancha */
+.items{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.item{display:grid;grid-template-columns:52px minmax(0,1fr) 78px 78px 64px auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.item img{width:52px;height:52px;object-fit:contain;background:repeating-conic-gradient(var(--surface-2) 0 25%,var(--surface) 0 50%) 0 0/12px 12px;border:1px solid var(--line);border-radius:6px}
+.item .in{padding:6px 8px;font-size:14px;text-align:right}
+.item label{font-size:11.5px;color:var(--muted);font-weight:600;display:flex;flex-direction:column;gap:2px}
+@media (max-width:640px){.item{grid-template-columns:52px minmax(0,1fr) 1fr 1fr 1fr;}.item .iname{grid-column:2/-1}.item .rm{grid-column:2/-1;justify-self:start}}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.pill.ok{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.pill.act{background:color-mix(in srgb,var(--crit) 13%,transparent);color:var(--crit)}
+.pill.prog{background:color-mix(in srgb,var(--b) 14%,transparent);color:var(--b)}
+.pill.done{background:var(--surface-2);color:var(--muted)}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:14px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:6px;align-items:center}
+.drop.over{border-color:var(--m);background:color-mix(in srgb,var(--m) 6%,var(--surface))}
+.rollwrap{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);padding:10px}
+.rollwrap canvas{display:block;margin:0 auto;max-width:100%;height:auto}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.stat{background:var(--surface-2);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column}
+.stat span{font-size:12px;color:var(--muted);font-weight:600}
+.stat b{font:800 18px var(--display);font-variant-numeric:tabular-nums}
+.meter{height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--m)}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.vgrid.over{outline:2px dashed var(--m);outline-offset:4px}
+.vtile{position:relative;border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:6px;display:flex;flex-direction:column;gap:5px;cursor:pointer;font:600 12.5px/1.25 var(--body);color:var(--ink);text-align:center}
+.vtile:hover{border-color:var(--m)}
+.vtile img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;background:var(--surface-2);display:block}
+.vupload{justify-content:center;align-items:center;border:2px dashed color-mix(in srgb,var(--m) 55%,var(--line));min-height:136px;background:color-mix(in srgb,var(--m) 5%,var(--surface))}
+.vupload small{color:var(--muted);font-weight:500}
+.vu-ico{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--m);color:var(--on-accent);font:800 22px/1 var(--display)}
+.vupload input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0}
+.vupload:focus-within{outline:3px solid color-mix(in srgb,var(--m) 55%,transparent);outline-offset:2px}
+.vprev{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;background:var(--surface-2);border-radius:8px}
+.vprev canvas{box-shadow:0 1px 4px rgba(0,0,0,.22);background:#fff;max-width:100%}
+.flabel{font-size:13px;color:var(--muted);font-weight:700;display:block;margin-bottom:6px}
+.opts3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.opts3c{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.opts2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.calmsg{font-size:13.5px;padding:8px 10px;border-radius:8px;background:var(--surface-2)}
+.calmsg.ok{background:color-mix(in srgb,var(--ok) 13%,var(--surface));color:var(--ink)}
+.calmsg.media{background:color-mix(in srgb,var(--warn) 13%,var(--surface))}
+.calmsg.baja{background:color-mix(in srgb,var(--crit) 12%,var(--surface))}
+.pitems{list-style:none;margin:0;padding:0}
+.pitem{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:10px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line)}
+.pdims{display:grid;grid-template-columns:repeat(3,minmax(0,78px));gap:6px;margin-top:6px}
+.pdims .f{font-size:11.5px}
+.pdims .in{padding:6px;text-align:center}
+.pdims .in[aria-invalid="true"]{border-color:var(--crit);background:color-mix(in srgb,var(--crit) 8%,var(--surface))}
+.opts5{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px}
+.subtabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.subtab{appearance:none;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:10px 14px;cursor:pointer;font:inherit;color:var(--ink);display:flex;flex-direction:column;gap:2px}
+.subtab b{font:700 15px var(--body)}
+.subtab small{color:var(--muted);font-size:12.5px}
+.subtab[aria-selected="true"]{border-color:var(--m);box-shadow:inset 0 0 0 1px var(--m);background:color-mix(in srgb,var(--m) 7%,var(--surface))}
+.optline{min-height:1.3em;margin:0;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font:500 13.5px var(--body);cursor:pointer;display:inline-flex;align-items:baseline;gap:6px;line-height:1.25;text-align:left}
+.chip small{color:var(--muted);font-size:12px;font-weight:500}
+.chip:hover{border-color:color-mix(in srgb,var(--m) 50%,var(--line))}
+.chip[aria-pressed="true"]{border-color:var(--m);background:color-mix(in srgb,var(--m) 10%,var(--surface));font-weight:700}
+.chips.seg .chip{font-weight:600;background:var(--surface-2)}
+.chips.seg .chip[aria-pressed="true"]{background:var(--m);color:var(--on-m);border-color:var(--m)}
+.matinfo{margin:10px 0 0;padding:8px 10px;border-radius:8px;background:var(--surface-2)}
+.btn.wa{background:#1f8f4e;border-color:#1f8f4e;color:#fff}
+.btn.wa:hover{background:#18763f}
+.proof{margin:8px 0;padding:8px;border-radius:10px;background:var(--surface-2);text-align:center}
+.proof img{max-width:100%;max-height:260px;display:block;margin:0 auto 4px}
+.proof small{color:var(--muted)}
+.okdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:1px}
+.pitem img{width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--line)}
+.pitem .pill{margin-top:3px}
+.tip{border-left:3px solid var(--m);padding:6px 10px;background:var(--surface-2);border-radius:0 8px 8px 0}
+/* dueño */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi span{font-size:13px;color:var(--muted);font-weight:600}
+.kpi b{font:800 24px var(--display);font-variant-numeric:tabular-nums}
+.orders{list-style:none;margin:0;padding:0}
+.order{display:grid;grid-template-columns:auto minmax(0,1fr) auto minmax(0,auto);gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.order .who b{display:block}
+.oact{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+@media (max-width:720px){.order{grid-template-columns:auto minmax(0,1fr) auto}.oact{grid-column:1/-1;justify-content:flex-start}}
+.odet{grid-column:1/-1;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.odet summary{cursor:pointer;padding:8px 12px;font-weight:600;font-size:14px;color:var(--muted)}
+.odet[open] summary{border-bottom:1px solid var(--line);color:var(--ink)}
+.detgrid{display:grid;grid-template-columns:minmax(200px,260px) minmax(0,1fr);gap:16px;padding:12px}
+@media (max-width:720px){.detgrid{grid-template-columns:1fr}}
+.dinfo{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;margin:0;font-size:14px;align-content:start}
+.dinfo dt{color:var(--muted)} .dinfo dd{margin:0;font-weight:600}
+.tablewrap{overflow-x:auto}
+table.det,table.cmp,table.cfg{border-collapse:collapse;width:100%;font-size:14px}
+table.det{min-width:420px} table.cmp{min-width:680px}
+.det th,.det td,.cmp th,.cmp td,.cfg th,.cfg td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.det thead th,.cfg thead th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.cmp thead th{font:800 15px var(--display);white-space:nowrap}
+.cmp th[scope="row"]{color:var(--muted);font-weight:600;width:20%}
+.cmp .mb{width:22px;height:22px;font-size:12px;margin-right:6px;vertical-align:-5px}
+.r{text-align:right!important}
+.cfg .in{padding:5px 8px;font-size:14px;text-align:right;max-width:130px}
+.owner-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:900px){.owner-grid{grid-template-columns:1fr}}
+.modal-bg{position:fixed;inset:0;background:rgba(8,10,14,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+.modal-bg.open{display:flex}
+.phone{width:min(370px,100%);background:var(--surface);color:var(--ink);border-radius:28px;border:9px solid #0d0f12;padding:16px;max-height:92vh;overflow:auto;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.phone-head{display:flex;gap:10px;align-items:center;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.logo{width:40px;height:40px;border-radius:10px;display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+.logo i{display:block}
+.phone-head small{display:block;color:var(--muted);font-size:12px}
+.ok-big{font:800 22px var(--display);color:var(--ok)}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;font-size:14px;z-index:30;display:none;max-width:90vw;text-align:center}
+.toast.show{display:block}
+.solobtn{margin-left:8px}
+.realnote{font-size:12.5px;color:var(--muted);margin:2px 0 8px;line-height:1.4}
+.solobar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:6px 0 10px;padding:8px 12px;border-radius:10px;background:color-mix(in srgb,var(--b) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--b) 35%,var(--line));font-size:13.5px}
+.solobar[hidden]{display:none!important}
+body.solo-fijo .solobar{display:none!important}
+.vencido{position:fixed;inset:0;z-index:50;background:rgba(15,17,22,.72);display:grid;place-items:center;padding:20px}
+.vencido .vbox{background:var(--surface);border-radius:16px;padding:24px;max-width:420px;display:flex;flex-direction:column;gap:12px;text-align:center}
+body.solo nav.tabs,body.solo .realnote,body.solo .solobtn,body.solo #app .intro{display:none!important}
+@media (max-width:600px){.solobtn{margin-left:0}}
+
+.mark{width:30px;height:30px;border-radius:9px;background:var(--a);color:#fff;display:grid;place-items:center;font:800 13px var(--display)}
+.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.day{appearance:none;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 4px;cursor:pointer;font:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:1px}
+.day small{font-size:11.5px;color:var(--muted);font-weight:600;text-transform:capitalize}
+.day b{font:800 18px var(--display)}
+.day .cnt2{font-size:11px;color:var(--muted)}
+.day[aria-pressed="true"]{border-color:var(--m);background:color-mix(in srgb,var(--m) 10%,var(--surface))}
+.day[disabled]{opacity:.4;cursor:not-allowed}
+.slots{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.slot{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.slot .hr{font:800 17px var(--display);font-variant-numeric:tabular-nums}
+.slot.libre .who{color:var(--muted)}
+.slot .who b{display:block}
+.slot .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+@media (max-width:640px){.slot{grid-template-columns:54px minmax(0,1fr)}.slot .acts{grid-column:1/-1;justify-content:flex-start}}
+.times{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px}
+.time{appearance:none;border:1.5px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 4px;font:700 15px var(--body);color:var(--ink);cursor:pointer;font-variant-numeric:tabular-nums}
+.time[aria-pressed="true"]{border-color:var(--m);background:var(--m);color:var(--on-accent)}
+.plist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;max-height:560px;overflow:auto}
+.pbtn{appearance:none;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:10px 6px;cursor:pointer;font:inherit;color:var(--ink);display:flex;gap:10px;align-items:center}
+.pbtn[aria-current="true"]{background:color-mix(in srgb,var(--m) 9%,var(--surface));border-radius:8px}
+.av{width:34px;height:34px;border-radius:50%;background:color-mix(in srgb,var(--m) 18%,var(--surface));color:var(--m);display:grid;place-items:center;font:800 13px var(--display);flex:none}
+.pbtn small{display:block;color:var(--muted);font-size:12.5px}
+.fhead{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.fhead .av{width:46px;height:46px;font-size:16px}
+.ftabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
+.ftab{appearance:none;border:0;background:none;padding:8px 10px;font:600 14px var(--body);color:var(--muted);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+.ftab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--m)}
+.entries{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.entry{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;background:var(--surface)}
+.entry .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;background:var(--surface-2);color:var(--ink);font-size:12px;font-weight:700}
+.tag.dict{background:color-mix(in srgb,var(--b) 15%,var(--surface));color:var(--b)}
+.tag.acl{background:color-mix(in srgb,var(--warn) 16%,var(--surface));color:var(--warn)}
+.tag.odo{background:color-mix(in srgb,var(--a) 15%,var(--surface));color:var(--a)}
+.entry dl{margin:0;display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:4px 12px;font-size:14px}
+.entry dt{color:var(--muted)} .entry dd{margin:0;white-space:pre-wrap}
+.field{display:flex;flex-direction:column;gap:4px}
+.field .lab{font-size:13px;color:var(--muted);font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mic{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px;font:600 12.5px var(--body);color:var(--ink);cursor:pointer;display:inline-flex;gap:5px;align-items:center}
+.mic.on{background:var(--crit);border-color:var(--crit);color:#fff}
+.mic.on::before{content:"";width:8px;height:8px;border-radius:50%;background:#fff;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.3}}
+textarea.in{resize:vertical;min-height:70px;font:500 14.5px/1.45 var(--body)}
+.sheet{border:1px solid #c8ccd2;border-radius:8px;overflow:auto;background:#fff;color:#202124;max-height:420px}
+.sheet table{border-collapse:collapse;font:12.5px/1.35 Arial,sans-serif;min-width:760px;width:100%}
+.sheet th,.sheet td{border:1px solid #e1e3e6;padding:4px 6px;vertical-align:top;text-align:left}
+.sheet thead th{background:#f1f3f4;color:#5f6368;font-weight:600;text-align:center;position:sticky;top:0}
+.sheet tbody th{background:#f1f3f4;color:#5f6368;font-weight:600;width:34px;text-align:center}
+.sheet tr.hdr td{font-weight:700;background:#e8f0fe}
+.sheet tr.new td{background:#e6f4ea}
+.sheetbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px}
+.sheetbar .file{display:inline-flex;gap:8px;align-items:center;font-weight:700}
+.gs{width:22px;height:26px;border-radius:3px;background:#188038;position:relative;flex:none}
+.gs::after{content:"";position:absolute;left:5px;right:5px;top:8px;bottom:6px;border:2px solid #fff;border-radius:1px;background:linear-gradient(#fff,#fff) 50% 0/2px 100% no-repeat,linear-gradient(#fff,#fff) 0 50%/100% 2px no-repeat}
+.lock{display:inline-flex;gap:5px;align-items:center;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--ok) 14%,var(--surface));color:var(--ok);font-weight:700;font-size:12px}
+.odo{display:flex;flex-direction:column;gap:10px;overflow-x:auto;padding-bottom:6px}
+.odorow{display:flex;gap:5px;justify-content:center;min-width:800px}
+.odorow .gap{width:14px}
+.tooth{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--muted);font-weight:700}
+.tooth svg{width:42px;height:42px;cursor:pointer;overflow:visible}
+.tooth polygon,.tooth rect{stroke:#4b5563;stroke-width:1;fill:#fff}
+.tooth polygon:hover,.tooth rect:hover{fill:color-mix(in srgb,var(--m) 20%,#fff)}
+.tooth .f-caries{fill:#e5484d}
+.tooth .f-arreglo{fill:#3b6fe0}
+.tools{display:flex;gap:6px;flex-wrap:wrap}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.week{display:grid;grid-template-columns:90px repeat(2,minmax(0,1fr)) auto;gap:8px;align-items:center}
+.week .dn{font-weight:700}
+@media (max-width:640px){.week{grid-template-columns:1fr 1fr}.week .dn{grid-column:1/-1}}
+.saldo{font-weight:800;color:var(--crit)}
+.pagado{font-weight:800;color:var(--ok)}
+.solobar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:6px 0 10px;padding:8px 12px;border-radius:10px;background:color-mix(in srgb,var(--a) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--a) 35%,var(--line));font-size:13.5px}
+.solobar[hidden]{display:none!important}
+body.solo-fijo .solobar{display:none!important}
+body.solo .realnote,body.solo .solobtns,body.solo #app .intro{display:none!important}
+.realnote{font-size:12.5px;color:var(--muted);margin:2px 0 8px;line-height:1.4}
+.solobtns{display:flex;gap:6px;flex-wrap:wrap}
+.vencido{position:fixed;inset:0;z-index:50;background:rgba(15,17,22,.72);display:grid;place-items:center;padding:20px}
+.vencido .vbox{background:var(--surface);border-radius:16px;padding:24px;max-width:420px;display:flex;flex-direction:column;gap:12px;text-align:center}
+.btn.wa{background:#1f8f4e;border-color:#1f8f4e;color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font:500 13.5px var(--body);cursor:pointer;display:inline-flex;align-items:baseline;gap:6px;line-height:1.25}
+.chip small{color:var(--muted);font-size:12px}
+.chip[aria-pressed="true"]{border-color:var(--m);background:color-mix(in srgb,var(--m) 10%,var(--surface));font-weight:700}
+
+.week input[type=time]{min-width:0;padding-left:6px;padding-right:4px;font-variant-numeric:tabular-nums}
+.week .f>span.row{gap:4px}
+/* v2: premium, login, avisos, informes */
+.prem{display:inline-block;font:700 10.5px/1 var(--body);letter-spacing:.04em;text-transform:uppercase;color:#7a4d00;background:#ffe2a8;border:1px solid #f1c46b;border-radius:999px;padding:3px 7px;vertical-align:middle}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .prem{color:#ffd58a;background:#3a2a0c;border-color:#6b4c14}}
+.whobar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#who{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.whochip{display:inline-flex;align-items:center;gap:8px;padding:3px 10px 3px 4px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+.whochip b{display:block;font-size:13px;line-height:1.2}.whochip small{display:block;font-size:11.5px;color:var(--muted);line-height:1.2}
+.av.sm{width:28px;height:28px;font-size:11px}
+body.solo #who{display:none}
+.login{max-width:720px;margin:10px auto;width:100%}
+.who-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.opt.who{display:flex;align-items:center;gap:10px;text-align:left}
+.opt.who b{display:block}.opt.who small{display:block;color:var(--muted)}
+.pin{display:flex;flex-direction:column;align-items:center;gap:12px;padding-top:6px;border-top:1px solid var(--line)}
+.pindots{display:flex;gap:12px}.pindots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--a);display:block}.pindots i.on{background:var(--a)}
+.pinpad{display:grid;grid-template-columns:repeat(3,72px);gap:8px}.pinpad .btn{height:52px;font-size:20px;font-weight:700}
+.mail{padding:10px 12px;border-radius:10px;background:var(--surface-2);font-size:14px}
+.entry.aviso p{margin:4px 0 6px}
+.tag.inf{background:color-mix(in srgb,var(--b) 16%,var(--surface));color:var(--b)}
+h3{font-size:15.5px}
+.infgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:6px}
+@media (max-width:640px){.infgrid{grid-template-columns:1fr}}
+.infcard{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.infcard small{color:var(--muted)}
+.infsec .ck{display:inline-flex;align-items:center;gap:6px;font-weight:700;cursor:pointer}
+.infsec .ck input{width:17px;height:17px;accent-color:var(--a)}
+#ficha .cardhead{margin-top:6px}
+.whochip .av{--m:var(--a)}
+.opt.who{flex-direction:row;align-items:center;justify-content:flex-start}
+.infcard .pill{white-space:normal;text-align:left}
+.motivo{display:block;margin:6px 0 0;padding:7px 10px;border-left:3px solid var(--b);background:color-mix(in srgb,var(--b) 8%,var(--surface));border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.4;max-width:70ch}
+/* pacientes: lista + ficha; en celular, una cosa por vez */
+.pgrid{display:grid;grid-template-columns:minmax(250px,0.7fr) minmax(0,1.7fr);gap:14px;align-items:start}
+.backp{display:none;align-self:flex-start}
+.ftab{white-space:nowrap;flex:none}
+@media (max-width:900px){
+  .pgrid{grid-template-columns:1fr}
+  .pgrid.has-sel .plistcard{display:none}
+  .pgrid:not(.has-sel) #ficha{display:none}
+  .backp{display:inline-flex}
+  .plist{max-height:none}
+  .pbtn{padding:12px 6px}
+  .fhead{flex-wrap:wrap}
+  .fhead .btn{width:100%}
+  .ftabs{margin:0 -14px;padding:0 14px}
+}
+.acu{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.acu .f{min-width:160px}
+.liqnums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.liqnums>div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.liqnums span{font-size:12.5px;color:var(--muted)}.liqnums b{font:800 18px var(--display);font-variant-numeric:tabular-nums}
+.liqnums .hl{border-color:color-mix(in srgb,var(--d) 45%,var(--line));background:color-mix(in srgb,var(--d) 7%,var(--surface))}
+@media (max-width:640px){.liqnums{grid-template-columns:1fr 1fr}}
+.in.sm{padding:4px 6px;font-size:13px;min-height:0}
+.liqnums .neg{border-color:color-mix(in srgb,var(--crit) 40%,var(--line));background:color-mix(in srgb,var(--crit) 6%,var(--surface))}
+.liqnums .neg b{color:var(--crit)}
+/* obras sociales, firma */
+.fbtns{display:flex;gap:6px;flex-wrap:wrap;align-items:flex-start}
+.credprev{max-width:220px;max-height:140px;border-radius:8px;border:1px solid var(--line);object-fit:cover}
+.credbig{max-width:100%;border-radius:10px;border:1px solid var(--line)}
+.phone.wide{max-width:640px;width:100%}
+.firmaprev{background:#fff;border:1px dashed var(--line);border-radius:10px;padding:8px;max-width:320px}
+.firmaprev img{max-width:100%;max-height:110px;display:block}
+.fcan{width:100%;max-width:600px;aspect-ratio:600/220;background:#fff;border:1.5px dashed var(--line);border-radius:10px;touch-action:none;cursor:crosshair}
+label.btn input[type=file]{display:none}
+.cfg td:first-child .in{text-align:left}
+
+.mark{width:34px;height:34px;border-radius:50%;background:#fff;border:2px solid var(--a);color:var(--a);display:grid;place-items:center;font:800 16px var(--display);flex:none}
+.todo{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.todo-b{appearance:none;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;cursor:pointer;font:inherit;color:var(--ink);display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center}
+.todo-b:hover{border-color:var(--a)}.todo-b .pill{grid-row:1/3}.todo-b .small{grid-column:2}
+.clist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.ccard{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.cc-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.cc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px 12px;font-size:14px}
+.cc-grid i{display:block;font-style:normal;font-size:12px;color:var(--muted)}
+.admgrid{display:flex;flex-direction:column;gap:10px;max-height:46vh;overflow:auto}
+.time[aria-pressed="true"]{background:var(--a);color:#fff;border-color:var(--a)}
+.time:disabled{opacity:.35;text-decoration:line-through}
+.plan-ed{display:flex;flex-direction:column;gap:8px}
+.pe-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px}
+.pe-row select.in,.pe-row input.in{width:auto;min-width:0}
+.pe-dias{display:flex;gap:6px;flex-wrap:wrap}
+.docs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.docs li{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.docs small{display:block;color:var(--muted);font-size:12.5px}
+.dk{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;background:color-mix(in srgb,var(--warn) 18%,var(--surface));color:var(--warn)}
+.dk.ok{background:color-mix(in srgb,var(--ok) 18%,var(--surface));color:var(--ok)}
+@media (max-width:640px){.docs li{grid-template-columns:28px 1fr}.docs li>.row{grid-column:2}}
+.asis{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.asis-d{display:flex;flex-wrap:wrap;gap:6px}
+.ad{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:5px 8px;min-width:58px;cursor:pointer;font:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:center;line-height:1.2}
+.ad small{font-size:11px;color:var(--muted)}.ad.p{background:color-mix(in srgb,var(--ok) 14%,var(--surface));border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}.ad.p small{color:var(--ok)}
+.ad.a{background:color-mix(in srgb,var(--crit) 10%,var(--surface));border-color:color-mix(in srgb,var(--crit) 40%,var(--line))}.ad.a small{color:var(--crit)}.ad:disabled{opacity:.45;cursor:default}
+.week6{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+@media (max-width:1000px){.week6{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (max-width:640px){.week6{grid-template-columns:1fr}}
+.wday{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.wday.today{border-color:var(--a);box-shadow:0 0 0 1px var(--a) inset}.wday h3{font-size:14px}
+.ses{border-left:3px solid var(--a);background:var(--surface-2);border-radius:6px;padding:6px 8px;font-size:13px;line-height:1.3}
+.ses span{color:var(--muted);font-size:12px}.ses.p{border-left-color:var(--ok)}.ses.a{border-left-color:var(--crit);opacity:.8}
+.ses.adm{border-left-color:var(--c);background:color-mix(in srgb,var(--c) 10%,var(--surface))}
+.pa{display:flex;gap:4px;margin-top:4px}.pa button{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:6px;font:600 11.5px var(--body);padding:2px 7px;cursor:pointer;color:var(--ink)}
+.pa button.on{background:var(--a);border-color:var(--a);color:#fff}
+.mail{padding:10px 12px;border-radius:10px;background:var(--surface-2);font-size:14px}
+.phone.wide{max-width:680px;width:100%;max-height:90vh;overflow:auto}
+.rolesel{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-left:auto}
+.rolesel select.in{width:auto;min-width:200px;padding:6px 10px;font-weight:600;color:var(--ink);border-color:var(--a)}
+@media (max-width:640px){.rolesel{margin-left:0;width:100%}.rolesel select.in{flex:1}}
+.sesl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.sescard{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.nota{border-left:3px solid var(--a);background:var(--surface-2);border-radius:0 8px 8px 0;padding:6px 10px}
+.nota p{margin:2px 0 0}
+.pa button{font-size:13px;padding:5px 12px}
+.slotc{display:inline-block;border-radius:999px;padding:3px 9px;font-size:12.5px;font-weight:600;border:1px solid var(--line)}
+.slotc.lib{background:color-mix(in srgb,var(--ok) 12%,var(--surface));border-color:color-mix(in srgb,var(--ok) 40%,var(--line));color:var(--ink)}
+button.slotc.lib{cursor:pointer;font-family:inherit}button.slotc.lib:hover{border-color:var(--ok)}
+.slotc.oc{background:var(--surface-2);color:var(--muted)}
+.dispday{padding:8px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.libres{flex-basis:100%;display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:2px}
+.ck{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+
+:root{--a:#2a8c80;--b:#2f6fb3;--c:#c46a1c;--d:#6b4fb3;}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--a:#5fd0c1;--b:#7fb0f0;--c:#f0a060;--d:#b49af2;}}
+#app{--m:var(--a);--on-m:#fff}
+
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="brand">
+    <span class="mark" aria-hidden="true">S</span>
+    <div><h1 id="brandname">Demo Senderos</h1><span class="sub">Equipo Terapéutico · Hurlingham</span></div>
+    <span class="flag">Pacientes y valores de ejemplo</span>
+    <div id="who"></div>
+  </div>
+  <nav class="tabs" id="tabs" aria-label="Secciones" role="tablist"></nav>
+  <p class="realnote">Demo para mostrar cómo funcionaría: los chicos, profesionales y valores son inventados. En la versión real todo queda en el Google Drive del centro y cada uno entra con su usuario: acá lo cambiás arriba, en "Usando como", para ver lo que ve cada profesional.</p>
+</div></header>
+<main id="app"></main>
+<div class="modal-bg" id="modal" role="dialog" aria-modal="true" aria-label="Ventana"><div id="modal-body"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(()=>{'use strict';
+/* ---------- PDF (propio, sin librerías) ---------- */
+const WIN={'–':0x96,'—':0x97,'“':0x93,'”':0x94,'‘':0x91,'’':0x92,'•':0x95,'…':0x85,'€':0x80};
+function winBytes(s){const out=[];for(const ch of s){const c=ch.codePointAt(0);if(c===10||c===13)out.push(c);else if(c<128)out.push(c);else if(c>=160&&c<=255)out.push(c);else if(WIN[ch])out.push(WIN[ch]);else out.push(63);}return out;}
+const pdfEsc=s=>s.replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)');
+const cw=(ch,b)=>{if(' ilj.,;:\'|!ÍíIt()[]f'.includes(ch))return 0.28;if('mwMW'.includes(ch))return b?0.9:0.83;if(ch===ch.toUpperCase()&&ch!==ch.toLowerCase())return b?0.72:0.67;return b?0.58:0.54;};
+const textW=(s,size,b)=>{let w=0;for(const ch of s)w+=cw(ch,b);return w*size;};
+function wrapW(text,size,maxW,b){const out=[];String(text).split('\n').forEach(par=>{let line='';par.split(/\s+/).filter(Boolean).forEach(w=>{const t=line?line+' '+w:w;if(textW(t,size,b)>maxW&&line){out.push(line);line=w;}else line=t;});out.push(line);});return out;}
+function pdfDoc(pie,build){
+  const W=595,H=842,M=56;const pages=[];let ops=[],y=H-M;const imgs=[];
+  const newPage=()=>{pages.push(ops);ops=[];y=H-M-6;};
+  const need=h=>{if(y-h<M+24)newPage();};
+  const T=(s,size,bold,x,gray)=>ops.push(`BT /${bold?'F2':'F1'} ${size} Tf ${gray?'0.42 g':'0 g'} ${x.toFixed(1)} ${y.toFixed(1)} Td (${pdfEsc(s)}) Tj ET`);
+  const api={
+    title(s){need(28);T(s,18,true,M);y-=22;},
+    sub(s){need(13);T(s,9.5,false,M,true);y-=13;},
+    rule(){y-=4;need(10);ops.push(`0.2 G 0.8 w ${M} ${y} m ${W-M} ${y} l S`);y-=16;},
+    h(s){need(40);y-=6;T(s.toUpperCase(),8.5,true,M,true);y-=5;ops.push(`0.82 G 0.5 w ${M} ${y} m ${W-M} ${y} l S`);y-=14;},
+    p(s,{size=10.5,indent=0,bold=false,gray=false}={}){wrapW(s,size,W-2*M-indent,bold).forEach(l=>{need(size*1.5);T(l,size,bold,M+indent,gray);y-=size*1.42;});y-=3;},
+    kv(k,v,kw=118){if(!v)return;const lines=wrapW(v,10.5,W-2*M-kw,false);need(15);T(k,9.5,true,M,true);lines.forEach((l,i)=>{if(i)need(15);T(l,10.5,false,M+kw);y-=15;});y-=2;},
+    box(lines){const h=lines.length*15+14;need(h+6);ops.push(`0.955 g ${M} ${y-h+11} ${W-2*M} ${h} re f`);y-=3;lines.forEach(([k,v])=>{T(k,9.5,true,M+10,true);T(v,10.5,false,M+150);y-=15;});y-=12;},
+    space(n){y-=n;},
+    newPage(){newPage();},
+    table(cols,rows,{size=8.5,row=13}={}){const tw=W-2*M,tot=cols.reduce((s,c)=>s+c.w,0),xs=[];let acc=M;cols.forEach(c=>{xs.push(acc);acc+=c.w/tot*tw;});const fit=(t,w)=>{t=String(t);while(t&&textW(t,size,false)>w-4)t=t.slice(0,-1);return t;};
+      const head=()=>{need(18);ops.push(`0.93 g ${M} ${y-4} ${tw} 14 re f`);cols.forEach((c,i)=>{const w=c.w/tot*tw,tx=c.r?xs[i]+w-4-textW(c.n,size,true):xs[i]+2;T(c.n,size,true,tx);});y-=15;};head();
+      rows.forEach((r,ri)=>{if(y-row-1<M+24){newPage();head();}if(r.bold){ops.push(`0.2 G 0.5 w ${M} ${y+10} m ${W-M} ${y+10} l S`);}cols.forEach((c,i)=>{const w=c.w/tot*tw,v=fit(r.v[i]??'',w),tx=c.r?xs[i]+w-4-textW(v,size,!!r.bold):xs[i]+2;T(v,size,!!r.bold,tx);});if(row>16)ops.push(`0.88 G 0.4 w ${M} ${y-row+size+2} m ${W-M} ${y-row+size+2} l S`);y-=row;});y-=6;},
+    sign(n1,n2,n3,img){const x=W-M-210;if(img){let dw=170,dh=dw*img.h/img.w;if(dh>62){dh=62;dw=dh*img.w/img.h;}need(dh+80);y-=24;const idx=imgs.push(img)-1;ops.push(`q ${dw.toFixed(1)} 0 0 ${dh.toFixed(1)} ${(x+5).toFixed(1)} ${(y-dh).toFixed(1)} cm /Im${idx} Do Q`);y-=dh+4;}else{need(90);y-=46;}ops.push(`0 G 0.6 w ${x} ${y} m ${W-M} ${y} l S`);y-=14;T(n1,10,true,x);y-=13;T(n2,9,false,x,true);y-=12;if(n3){T(n3,9,false,x,true);y-=12;}}
+  };
+  build(api);pages.push(ops);
+  const objs=[];const add=s=>{objs.push(s);return objs.length;};
+  const cat=add(null),pgs=add(null),f1=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>'),f2=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
+  const imgIds=imgs.map(im=>{const b=atob(im.data.split(',')[1]),bin=new Uint8Array(b.length);for(let i=0;i<b.length;i++)bin[i]=b.charCodeAt(i);return add({img:true,bin,w:im.w,h:im.h});});
+  const xo=imgIds.length?` /XObject << ${imgIds.map((n,i)=>`/Im${i} ${n} 0 R`).join(' ')} >>`:'';
+  const kids=[];pages.forEach((o,i)=>{const foot=`0.82 G 0.5 w ${M} 40 m ${W-M} 40 l S\nBT /F1 8 Tf 0.42 g ${M} 28 Td (${pdfEsc(pie)}) Tj ET\nBT /F1 8 Tf 0.42 g ${W-M-58} 28 Td (${pdfEsc(`Página ${i+1} de ${pages.length}`)}) Tj ET`;
+    const c=add({stream:o.join('\n')+'\n'+foot});kids.push(add(`<< /Type /Page /Parent ${pgs} 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 ${f1} 0 R /F2 ${f2} 0 R >>${xo} >> /Contents ${c} 0 R >>`));});
+  objs[cat-1]=`<< /Type /Catalog /Pages ${pgs} 0 R >>`;objs[pgs-1]=`<< /Type /Pages /Kids [${kids.map(k=>k+' 0 R').join(' ')}] /Count ${kids.length} >>`;
+  const bytes=[];const push=s=>{for(const b of winBytes(s))bytes.push(b);};const off=[];push('%PDF-1.4\n');
+  objs.forEach((o,i)=>{off[i]=bytes.length;if(o&&o.img){push(`${i+1} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${o.w} /Height ${o.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${o.bin.length} >>\nstream\n`);for(const b of o.bin)bytes.push(b);push('\nendstream\nendobj\n');}else if(o&&o.stream){const sb=winBytes(o.stream);push(`${i+1} 0 obj\n<< /Length ${sb.length} >>\nstream\n`);sb.forEach(b=>bytes.push(b));push('\nendstream\nendobj\n');}else push(`${i+1} 0 obj\n${o}\nendobj\n`);});
+  const xref=bytes.length;push(`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`+off.map(o=>String(o).padStart(10,'0')+' 00000 n \n').join('')+`trailer\n<< /Size ${objs.length+1} /Root ${cat} 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+  return new Blob([new Uint8Array(bytes)],{type:'application/pdf'});}
+
+let dl=null;(async()=>{try{if(window.claude&&typeof window.claude.use==='function')dl=await window.claude.use('downloads');}catch(e){dl=null;}})();
+async function saveFile(name,blob){if(dl){try{await dl.save({filename:name,data:blob});return 'ok';}catch(e){return 'error';}}try{const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);return 'ok';}catch(e){return 'error';}}
+const slug=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+
+/* ---------- utilidades ---------- */
+const $=id=>document.getElementById(id);
+const clone=o=>JSON.parse(JSON.stringify(o));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>'$ '+Math.round(n).toLocaleString('es-AR');
+const pad2=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+const parseYmd=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
+const DOW=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const fechaLarga=s=>{const d=parseYmd(s);return `${DOW[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;};
+const fechaCorta=t=>{const d=new Date(t);return pad2(d.getDate())+'/'+pad2(d.getMonth()+1)+'/'+d.getFullYear();};
+const dm=s=>{const d=parseYmd(s);return d.getDate()+'/'+(d.getMonth()+1);};
+const iniciales=n=>String(n||'?').replace(/^(Lic\.|Dra?\.)\s*/,'').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join('');
+const edad=fn=>{if(!fn)return '';const d=parseYmd(fn),h=new Date();let e=h.getFullYear()-d.getFullYear();if(h<new Date(h.getFullYear(),d.getMonth(),d.getDate()))e--;return e;};
+const MESN=m=>{const [y,mm]=m.split('-').map(Number);return MESES[mm-1]+' '+y;};
+const mesMas=(m,n)=>{const [y,mm]=m.split('-').map(Number);const d=new Date(y,mm-1+n,1);return d.getFullYear()+'-'+pad2(d.getMonth()+1);};
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),3200);}
+function waLink(tel,text){const d=String(tel||'').replace(/\D/g,'');let n='';if(d.length>=10)n=d.startsWith('54')?d:'549'+d.replace(/^0/,'');return 'https://wa.me/'+n+'?text='+encodeURIComponent(text);}
+const chip=(on,attrs,inner)=>`<button type="button" class="chip" aria-pressed="${on}" ${attrs}>${inner}</button>`;
+let uid=Date.now()%100000;const nid=p=>p+(uid++).toString(36);
+let seedR=7;const rnd=()=>{seedR=(seedR*16807)%2147483647;return seedR/2147483647;};
+
+/* ---------- datos fijos ---------- */
+const CEN={nombre:'Senderos · Equipo Terapéutico',corto:'Senderos',dir:'Madame Curie 49, Hurlingham',tel:'11-3203-4216 / 11-6859-1216'};
+const AREAS=[['to','Terapia ocupacional'],['pp','Psicopedagogía'],['psi','Psicología TCC'],['fono','Fonoaudiología'],['kine','Kinesiología'],['pm','Psicomotricidad'],['mt','Musicoterapia'],['et','Estimulación temprana'],['ae','Apoyo escolar']];
+const areaN=id=>(AREAS.find(a=>a[0]===id)||[,'—'])[1];
+const CORTO={to:'TO',pp:'Psicopedagogía',psi:'Psicología',fono:'Fono',kine:'Kinesio',pm:'Psicomotricidad',mt:'Musicoterapia',et:'Estimulación',ae:'Apoyo escolar'};
+const DOCS=[['orden','Orden médica de prestaciones','Qué terapias y cuántas por semana (ej.: fono 2 por semana, enero a diciembre)',true],['hc','Resumen de historia clínica','',false],['cud','CUD','Certificado Único de Discapacidad',true],['fdisc','Formulario de discapacidad','',false],['fprep','Formulario de la prepaga','Solo si tiene prepaga',false],['dni','DNI del paciente','',false],['firmas','Registro de firmas de familiares','Quiénes firman las planillas de asistencia',false],['estudios','Estudios','',false],['resumen','Resumen clínico','',false]];
+const ESTC={nueva:['Nueva consulta','warn'],agendada:['Entrevista agendada','prog'],admitido:['Admitido','ok'],espera:['Lista de espera','act'],no:['No corresponde','done']};
+
+/* ---------- estado ---------- */
+const KEY='demo-senderos-v2';
+const S={view:'hoy',cfg:null,pros:[],obras:[],consultas:[],pacientes:[],asis:{},informes:{},presup:{},planillas:{},mensual:{},hc:[],rol:'admin',psDay:null,verEquipo:false,eqArea:'',
+  cFiltro:'activas',sel:null,ftab:'plan',week:null,agPro:'',mes:null,liqMes:null,q:''};
+function save(){try{localStorage.setItem(KEY,JSON.stringify({cfg:S.cfg,pros:S.pros,obras:S.obras,consultas:S.consultas,pacientes:S.pacientes,asis:S.asis,informes:S.informes,presup:S.presup,planillas:S.planillas,mensual:S.mensual,hc:S.hc,rol:S.rol}));}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(!d||!Array.isArray(d.pacientes))return false;Object.assign(S,d);return true;}catch(e){return false;}}
+const pac=id=>S.pacientes.find(p=>p.id===id);
+const proBy=id=>S.pros.find(p=>p.id===id)||{n:'Sin asignar',area:'',mat:'',pct:0};
+const obraBy=id=>S.obras.find(o=>o.id===id)||{n:'Particular',valor:S.cfg.valorParticular,codem:false,aut:false,prepaga:false};
+const hoyS=()=>ymd(new Date());
+const docsDe=p=>DOCS.filter(d=>d[0]!=='fprep'||obraBy(p.osId).prepaga);
+const isPro=()=>S.rol!=='admin';
+const yo=()=>S.pros.find(p=>p.id===S.rol);
+const prestVis=p=>isPro()?p.prest.filter(pr=>pr.proId===S.rol):p.prest;
+const toMin=h=>{const [a,b]=String(h).split(':').map(Number);return a*60+(b||0);};
+const toHM=m=>pad2(Math.floor(m/60))+':'+pad2(m%60);
+const DCORTO=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+function ocupados(proId){const P=proBy(proId),out=[],mes=hoyS().slice(0,7);S.pacientes.forEach(p=>p.prest.filter(pr=>pr.proId===proId&&pr.hasta>=mes).forEach(pr=>pr.dias.forEach(x=>out.push({d:+x.d,ini:toMin(x.h),fin:toMin(x.h)+(P.dur||45),h:x.h,p,pr}))));return out.sort((a,b)=>a.d-b.d||a.ini-b.ini);}
+function libres(proId){const P=proBy(proId),oc=ocupados(proId),out={};[1,2,3,4,5,6].forEach(d=>{out[d]=[];((P.disp||{})[d]||[]).forEach(([a,b])=>{const dur=P.dur||45;for(let m=toMin(a);m+dur<=toMin(b);m+=dur){if(!oc.some(o=>o.d===d&&m<o.fin&&m+dur>o.ini))out[d].push(toHM(m));}});});return out;}
+function autoDias(proId,frec){const L=libres(proId),out=[],used=new Set();for(let pass=0;pass<2&&out.length<3;pass++)[1,2,3,4,5,6].forEach(d=>{if(out.length>=3)return;const h=L[d].find(x=>!out.some(o=>o.d===d&&o.h===x));if(h&&(pass||!used.has(d))){out.push({d,h});used.add(d);}});while(out.length<3)out.push({d:5,h:'16:00'});return out;}
+function choques(r){if(!r.proId)return [];const oc=ocupados(r.proId),P=proBy(r.proId),dur=P.dur||45;return r.dias.slice(0,r.frec).map(x=>{const m=toMin(x.h),o=oc.find(o=>o.d===+x.d&&m<o.fin&&m+dur>o.ini&&o.pr!==r._orig);return o?`${DCORTO[x.d]} ${x.h} ya lo tiene ocupado con ${o.p.nombre.split(' ')[0]}`:'';}).filter(Boolean);}
+const nLibres=proId=>Object.values(libres(proId)).reduce((s,a)=>s+a.length,0);
+let rec=null;function toggleMic(btn){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(rec){rec.stop();return;}if(!SR){toast('Este navegador no permite dictar. Probá con Chrome en la compu o en Android.');return;}const ta=$(btn.dataset.target);if(!ta)return;const base=ta.value?ta.value.replace(/\s*$/,' '):'';rec=new SR();rec.lang='es-AR';rec.continuous=true;rec.interimResults=true;rec.onresult=ev=>{let t='';for(let i=0;i<ev.results.length;i++)t+=ev.results[i][0].transcript;ta.value=base+t;};rec.onerror=e=>toast(e.error==='not-allowed'?'Hay que permitir el micrófono para dictar.':'No se pudo dictar.');rec.onend=()=>{rec=null;btn.classList.remove('on');btn.textContent='🎙 Dictar';};try{rec.start();btn.classList.add('on');btn.textContent='Escuchando… tocá para parar';}catch(e){rec=null;}}
+
+/* ---------- sesiones (salen del plan de tratamiento) ---------- */
+function sesionesDe(p,pr,desde,hasta){const out=[];const a=parseYmd(desde<pr.desde+'-01'?pr.desde+'-01':desde);const fin=parseYmd(hasta);const tope=pr.hasta+'-31';
+  for(let d=new Date(a);d<=fin;d.setDate(d.getDate()+1)){const f=ymd(d);if(f>tope||f<ymd(new Date(p.alta)))continue;pr.dias.forEach(x=>{if(+x.d===d.getDay())out.push({f,h:x.h});});}
+  return out.filter(s=>!S.cfg.feriados.includes(s.f));}
+const akey=(pid,prid,f)=>pid+'|'+prid+'|'+f;
+function sesionesMes(p,pr,mes){const [y,m]=mes.split('-').map(Number);const fin=ymd(new Date(y,m,0));return sesionesDe(p,pr,mes+'-01',fin);}
+function resumenMes(p,pr,mes){const ss=sesionesMes(p,pr,mes);let P=0,A=0,sin=0;ss.forEach(s=>{const v=S.asis[akey(p.id,pr.id,s.f)];if(v==='P')P++;else if(v==='A')A++;else if(s.f<=hoyS())sin++;});return {ss,P,A,sin};}
+function sesionesDelDia(f){const out=[];const d=parseYmd(f);S.pacientes.filter(p=>p.activo!==false).forEach(p=>p.prest.forEach(pr=>{if(f<pr.desde+'-01'||f>pr.hasta+'-31'||f<ymd(new Date(p.alta))||S.cfg.feriados.includes(f))return;pr.dias.forEach(x=>{if(+x.d===d.getDay())out.push({p,pr,h:x.h,f});});}));
+  S.consultas.filter(c=>c.estado==='agendada'&&c.ent&&c.ent.f===f).forEach(c=>out.push({adm:c,h:c.ent.h,f}));
+  return out.sort((a,b)=>a.h.localeCompare(b.h));}
+function mesCierre(){if(S.mes)return S.mes;const h=new Date();const m=ymd(h).slice(0,7);S.mes=h.getDate()<=10?mesMas(m,-1):m;return S.mes;}
+const cuatris=y=>[['1.er informe','01-01','04-30','enero a abril'],['2.º informe','05-01','08-31','mayo a agosto'],['3.er informe','09-01','12-31','septiembre a diciembre']].map(([n,a,b,l],i)=>({i:i+1,n,desde:y+'-'+a,hasta:y+'-'+b,lab:l}));
+const ikey=(pid,prid,y,i)=>pid+'|'+prid+'|'+y+'|'+i;
+
+/* ---------- vistas ---------- */
+const MODES={
+ hoy:{tab:'Hoy',title:'Lo que hay que hacer',intro:'Todo lo pendiente del centro en un solo lugar: consultas para responder, entrevistas, papeles que faltan, planillas para firmar, informes y presupuestos.'},
+ admision:{tab:'Admisiones',title:'Consultas y admisiones',intro:'Las familias siguen escribiendo por WhatsApp como siempre. Mientras chatean, Joni o Ivana cargan acá las respuestas. Así las consultas no se pierden en los chats, se agenda la entrevista presencial y, si se admite, el chico pasa a paciente con todo ya cargado.'},
+ pacientes:{tab:'Pacientes',title:'Pacientes en tratamiento',intro:'Cada chico con su plan de tratamiento (qué terapias, con quién, qué días), su documentación para la obra social, la asistencia y los tres informes del año.'},
+ agenda:{tab:'Agenda',title:'Agenda de la semana',intro:'Las sesiones salen solas del plan de cada chico, en sus días y horarios fijos. Se marca si vino o no, y con eso se arman solas las planillas de asistencia del mes.'},
+ mes:{tab:'Fin de mes',title:'Cierre del mes',intro:'Planillas de asistencia listas para que firme la familia, CODEM o autorizaciones que pide cada obra social, lo que hay que facturar a cada una y los presupuestos del año que viene.'},
+ pros:{tab:'Equipo',title:'Equipo: disponibilidad y liquidación',intro:'Cada profesional carga los días y horarios que puede venir al centro. Acá ves los horarios libres de cada uno para las nuevas admisiones, y la liquidación del mes: cada uno cobra un porcentaje de lo que se factura por sus sesiones.'},
+ ses:{tab:'Mis sesiones',title:'Tus sesiones',intro:'Marcás si el chico vino y escribís (o dictás) la nota de la sesión. Se agrega sola a la historia del paciente, en su planilla del Drive del centro. Lo que se guarda no se puede borrar.'},
+ mispac:{tab:'Mis pacientes',title:'Tus pacientes',intro:'La historia de cada chico con tus notas de sesión, y los tres informes del año. Cuando armás un informe, las notas del período vienen cargadas como borrador.'},
+ disp:{tab:'Mi disponibilidad',title:'Tu disponibilidad',intro:'Los días y horarios que podés atender en el centro. El centro ve tus horarios libres para dar turnos a las nuevas admisiones.'},
+ config:{tab:'Configuración',title:'Datos del centro',intro:'Obras sociales con sus valores y lo que pide cada una, horarios de las entrevistas de admisión, feriados y el equipo.'}};
+const VIEWS_ADMIN=['hoy','admision','pacientes','agenda','mes','pros','config'],VIEWS_PRO=['ses','mispac','disp'];const views=()=>isPro()?VIEWS_PRO:VIEWS_ADMIN;
+function tabs(){const nC=S.consultas.filter(c=>c.estado==='nueva').length;
+  if(!views().includes(S.view))S.view=views()[0];
+  const w=$('who');if(w)w.innerHTML=`<label class="rolesel"><span>Usando como</span><select class="in" data-rol="1">${[['admin','Administración (Joni / Ivana)']].concat(S.pros.map(p=>[p.id,p.n+' · '+CORTO[p.area]])).map(([k,n])=>`<option value="${k}" ${S.rol===k?'selected':''}>${esc(n)}</option>`).join('')}</select></label>`;
+  $('tabs').innerHTML=views().map(v=>`<button class="tab" role="tab" aria-selected="${S.view===v}" style="--tc:var(--a)" data-act="tab" data-v="${v}">${MODES[v].tab}${v==='admision'&&nC?` <span class="cnt">${nC}</span>`:''}</button>`).join('');}
+function intro(v){const M=MODES[v];return `<div class="intro"><span class="mb">${v==='hoy'?'★':v==='config'?'⚙':'✓'}</span><div><h2>${M.title}</h2><p>${M.intro}</p></div></div>`;}
+
+/* ---- HOY ---- */
+function pendientes(){const hoy=hoyS(),mes=mesCierre(),y=new Date().getFullYear(),ny=y+1,L=[];
+  const nuevas=S.consultas.filter(c=>c.estado==='nueva');if(nuevas.length)L.push(['admision','Consultas para agendar entrevista',`${nuevas.length}: ${nuevas.map(c=>esc(c.nino)).join(', ')}`,'warn']);
+  const ents=S.consultas.filter(c=>c.estado==='agendada'&&c.ent&&c.ent.f>=hoy).sort((a,b)=>(a.ent.f+a.ent.h).localeCompare(b.ent.f+b.ent.h));if(ents.length)L.push(['admision','Entrevistas de admisión',ents.map(c=>`${esc(c.nino)}: ${fechaLarga(c.ent.f)} ${c.ent.h} h`).join(' · '),'prog']);
+  let sinFirma=0,codem=0;S.pacientes.forEach(p=>{p.prest.forEach(pr=>{const r=resumenMes(p,pr,mes);if(r.ss.length&&(S.planillas[p.id+'|'+pr.id+'|'+mes]||{}).estado!=='firmada'&&(S.planillas[p.id+'|'+pr.id+'|'+mes]||{}).estado!=='presentada')sinFirma++;});const o=obraBy(p.osId);if((o.codem||o.aut)&&!S.mensual[p.id+'|'+mesMas(hoy.slice(0,7),0)])codem++;});
+  if(sinFirma)L.push(['mes',`Planillas de asistencia de ${MESN(mes)} sin firmar`,`${sinFirma} planillas. Se imprimen desde Fin de mes y las firma la familia.`,'warn']);
+  if(codem)L.push(['mes',`CODEM o autorización de ${MESN(hoy.slice(0,7))}`,`${codem} pacientes tienen obra social que lo pide y todavía no está cargado.`,'warn']);
+  const faltan=S.pacientes.filter(p=>docsDe(p).some(d=>!(p.docs[d[0]]||{}).ok));if(faltan.length)L.push(['pacientes','Documentación incompleta',`${faltan.length} pacientes: ${faltan.slice(0,5).map(p=>esc(p.nombre.split(' ')[0])).join(', ')}${faltan.length>5?'…':''}`,'act']);
+  const lim=ymd(addDays(new Date(),60));const vencen=S.pacientes.filter(p=>p.cudVence&&p.cudVence<=lim);if(vencen.length)L.push(['pacientes','CUD por vencer (60 días)',vencen.map(p=>`${esc(p.nombre.split(' ')[0])} (${fechaCorta(parseYmd(p.cudVence))})`).join(' · '),'act']);
+  const C=cuatris(y).find(c=>hoy>=c.desde&&hoy<=c.hasta);if(C){let n=0;S.pacientes.forEach(p=>p.prest.forEach(pr=>{if(!S.informes[ikey(p.id,pr.id,y,C.i)])n++;}));if(n)L.push(['pacientes',`${C.n} del año: falta hacer`,`${n} informes (uno por terapia). Se entregan a fin de ${C.lab.split(' a ')[1]}.`,'prog']);}
+  if(new Date().getMonth()>=9){const n=S.pacientes.filter(p=>!S.presup[p.id+'|'+ny]).length;if(n)L.push(['mes',`Presupuestos ${ny}`,`Faltan ${n} de ${S.pacientes.length}. Se arman en noviembre para todo el año que viene.`,'prog']);}
+  return L;}
+function viewHoy(){const L=pendientes(),ses=sesionesDelDia(hoyS());
+  return `${intro('hoy')}<div class="kpis"><div class="card kpi"><span>Pacientes en tratamiento</span><b>${S.pacientes.length}</b></div><div class="card kpi"><span>Sesiones hoy</span><b>${ses.filter(s=>!s.adm).length}</b></div><div class="card kpi"><span>Consultas nuevas</span><b>${S.consultas.filter(c=>c.estado==='nueva').length}</b></div><div class="card kpi"><span>Lista de espera</span><b>${S.consultas.filter(c=>c.estado==='espera').length}</b></div></div>
+  <div class="card"><h2>Pendientes</h2>${L.length?`<ul class="todo">${L.map(([v,t,d,c])=>`<li><button type="button" class="todo-b" data-act="tab" data-v="${v}"><span class="pill ${c}">${esc(MODES[v].tab)}</span><b>${t}</b><span class="small muted">${d}</span></button></li>`).join('')}</ul>`:'<p class="empty">No hay nada pendiente.</p>'}</div>`;}
+
+/* ---- ADMISIONES ---- */
+const PREGUNTAS=()=>`¡Hola! Gracias por comunicarte con ${CEN.corto}. Para poder orientarte, ¿nos contás?\n1. ¿Qué están buscando? (qué terapia o qué les preocupa)\n2. Nombre y edad del niño o niña\n3. ¿Tiene diagnóstico? ¿Cuál?\n4. ¿Tiene CUD (certificado de discapacidad)?\n5. ¿Qué obra social o prepaga tiene?\n6. ¿Tiene orden médica?`;
+function viewAdmision(){const F=S.cFiltro,cnt=k=>S.consultas.filter(c=>k==='activas'?(c.estado==='nueva'||c.estado==='agendada'):c.estado===k).length;
+  const L=S.consultas.filter(c=>F==='activas'?(c.estado==='nueva'||c.estado==='agendada'):c.estado===F).sort((a,b)=>b.t-a.t);
+  return `${intro('admision')}<div class="card"><div class="cardhead"><h2>Consultas</h2><div class="row"><button class="btn sm" data-act="copiarPreg">Copiar preguntas para WhatsApp</button><button class="btn sm primary" data-act="cNueva">+ Consulta nueva</button></div></div>
+  <div class="chips">${[['activas','En curso'],['espera','Lista de espera'],['admitido','Admitidos'],['no','No corresponde']].map(([k,n])=>chip(F===k,`data-act="cFiltro" data-v="${k}"`,`${n} (${cnt(k)})`)).join('')}</div>
+  ${L.length?`<ul class="clist">${L.map(cardConsulta).join('')}</ul>`:'<p class="empty">No hay consultas acá.</p>'}</div>`;}
+function cardConsulta(c){const E=ESTC[c.estado],o=obraBy(c.osId);
+  let acts='';if(c.estado==='nueva')acts=`<button class="btn sm primary" data-act="cAgendar" data-id="${c.id}">Agendar entrevista</button>`;
+  else if(c.estado==='agendada')acts=`<button class="btn sm primary" data-act="cEntrevista" data-id="${c.id}">Registrar entrevista</button><a class="btn sm wa" href="${waLink(c.tel,msgConfirma(c))}" target="_blank" rel="noopener">Reenviar confirmación</a>`;
+  else if(c.estado==='espera')acts=`<button class="btn sm" data-act="cEntrevista" data-id="${c.id}">Admitir ahora</button><a class="btn sm wa" href="${waLink(c.tel,`Hola ${c.familiar.split(' ')[0]}, te escribimos de ${CEN.corto}: se liberó un lugar para ${c.nino.split(' ')[0]}. ¿Seguís interesada/o?`)}" target="_blank" rel="noopener">Avisar que hay lugar</a>`;
+  else if(c.estado==='admitido'&&c.pacId)acts=`<button class="btn sm" data-act="ficha" data-v="${c.pacId}">Ver paciente</button>`;
+  return `<li class="ccard"><div class="cc-top"><div><b>${esc(c.nino)}</b>${c.fnac?` <span class="small muted">· ${edad(c.fnac)} años</span>`:''}<br><span class="small muted">Escribió ${esc(c.familiar)} (${esc(c.parentesco)}) el ${fechaCorta(c.t)} · atiende ${esc(c.atiende)}</span></div><span class="pill ${E[1]}">${E[0]}${c.estado==='agendada'&&c.ent?`: ${dm(c.ent.f)} ${c.ent.h}`:''}</span></div>
+  <div class="cc-grid"><span><i>Busca</i>${c.busca.map(areaN).join(', ')||'—'}</span><span><i>Diagnóstico</i>${esc(c.dx||'No tiene / no sabe')}</span><span><i>CUD</i>${c.cud==='si'?'Sí':c.cud==='tramite'?'En trámite':'No'}</span><span><i>Obra social</i>${esc(o.n)}${c.afiliado?' · '+esc(c.afiliado):''}</span><span><i>Orden médica</i>${c.orden==='si'?'Sí':'No'}</span></div>
+  ${c.notas?`<p class="small">${esc(c.notas)}</p>`:''}${c.entNotas?`<p class="small"><b>Entrevista:</b> ${esc(c.entNotas)}</p>`:''}
+  <div class="row">${acts}<a class="btn sm" href="${waLink(c.tel,'')}" target="_blank" rel="noopener">Abrir chat</a>${c.estado!=='admitido'?`<button class="x" data-act="cEditar" data-id="${c.id}">Editar</button>`:''}</div></li>`;}
+function consultaForm(c){const n=c||{familiar:'',parentesco:'Mamá',tel:'',atiende:'Joni',nino:'',fnac:'',busca:[],dx:'',cud:'no',osId:'',afiliado:'',orden:'no',notas:''};S.cf=clone(n);S.cf.id=c?c.id:null;const f=S.cf;
+  return `<div class="phone wide" style="--m:var(--a)"><h2 style="font-size:18px">${c?'Editar consulta':'Consulta nueva'}</h2><p class="small muted">Lo que van respondiendo por WhatsApp.</p>
+  <div class="fields"><label class="f">Quién escribe<input class="in" data-cf="familiar" value="${esc(f.familiar)}" placeholder="Nombre"></label><label class="f">Es…<select class="in" data-cf="parentesco">${['Mamá','Papá','Abuela/o','Tía/o','Otro'].map(x=>`<option ${f.parentesco===x?'selected':''}>${x}</option>`).join('')}</select></label><label class="f">WhatsApp<input class="in" data-cf="tel" inputmode="tel" value="${esc(f.tel)}"></label><label class="f">Lo atiende<select class="in" data-cf="atiende">${['Joni','Ivana'].map(x=>`<option ${f.atiende===x?'selected':''}>${x}</option>`).join('')}</select></label>
+  <label class="f">Nombre del niño/a<input class="in" data-cf="nino" value="${esc(f.nino)}"></label><label class="f">Fecha de nacimiento<input class="in" type="date" data-cf="fnac" value="${esc(f.fnac)}"></label></div>
+  <span class="flabel">¿Qué buscan?</span><div class="chips">${AREAS.map(([k,n])=>chip(f.busca.includes(k),`data-act="cfBusca" data-v="${k}"`,n)).join('')}</div>
+  <div class="fields"><label class="f" style="grid-column:1/-1">Diagnóstico<input class="in" data-cf="dx" value="${esc(f.dx)}" placeholder="Ej.: TEA, TDAH, retraso madurativo… o vacío si no tiene"></label>
+  <label class="f">CUD<select class="in" data-cf="cud"><option value="si" ${f.cud==='si'?'selected':''}>Tiene</option><option value="tramite" ${f.cud==='tramite'?'selected':''}>En trámite</option><option value="no" ${f.cud==='no'?'selected':''}>No tiene</option></select></label>
+  <label class="f">Obra social o prepaga<select class="in" data-cf="osId"><option value="">Particular</option>${S.obras.map(o=>`<option value="${o.id}" ${f.osId===o.id?'selected':''}>${esc(o.n)}</option>`).join('')}</select></label>
+  <label class="f">N.º de afiliado<input class="in" data-cf="afiliado" value="${esc(f.afiliado)}"></label>
+  <label class="f">Orden médica<select class="in" data-cf="orden"><option value="si" ${f.orden==='si'?'selected':''}>Tiene</option><option value="no" ${f.orden==='no'?'selected':''}>No tiene</option></select></label>
+  <label class="f" style="grid-column:1/-1">Notas<textarea class="in" data-cf="notas" rows="2">${esc(f.notas)}</textarea></label></div>
+  <button class="btn primary" data-act="cfOk">Guardar consulta</button><button class="btn" data-act="close">Cancelar</button></div>`;}
+function proxDiasAdm(n){const out=[];for(let i=1;out.length<n&&i<40;i++){const d=addDays(new Date(),i),f=ymd(d);if(S.cfg.admDias.includes(d.getDay())&&!S.cfg.feriados.includes(f))out.push(f);}return out;}
+function ocupadoAdm(f,h){return S.consultas.some(c=>c.estado==='agendada'&&c.ent&&c.ent.f===f&&c.ent.h===h);}
+function agendarHTML(c){const dias=proxDiasAdm(8);S.ag={id:c.id,f:null,h:null};
+  return `<div class="phone wide" style="--m:var(--a)"><h2 style="font-size:18px">Entrevista de admisión presencial</h2><p class="small">${esc(c.nino)} · con ${esc(c.familiar)}</p><p class="small muted">Horarios de entrevista del centro (se cambian en Configuración).</p>
+  <div class="admgrid">${dias.map(f=>`<div><b>${cap(fechaLarga(f))}</b><div class="times">${S.cfg.admHoras.map(h=>`<button type="button" class="time" data-act="agSel" data-f="${f}" data-h="${h}" ${ocupadoAdm(f,h)?'disabled':''}>${h}</button>`).join('')}</div></div>`).join('')}</div>
+  <div id="ag-res"></div><button class="btn" data-act="close">Cancelar</button></div>`;}
+function msgConfirma(c){return `Hola ${c.familiar.split(' ')[0]}, te confirmamos la entrevista de admisión de ${c.nino.split(' ')[0]} en ${CEN.corto}: ${fechaLarga(c.ent.f)} a las ${c.ent.h} h, en ${CEN.dir}.\nPor favor traé: DNI de ${c.nino.split(' ')[0]}, CUD si tiene, credencial de la obra social, orden médica y los estudios o informes que tengan.\n¡Te esperamos!`;}
+function entrevistaHTML(c){S.en={id:c.id,notas:c.entNotas||'',dec:'admitir',motivo:'',plan:c.busca.map(a=>{const pid=(S.pros.find(p=>p.area===a)||{}).id||'';return {area:a,proId:pid,frec:2,dias:pid?autoDias(pid,2):[{d:1,h:'15:00'},{d:3,h:'15:00'},{d:5,h:'15:00'}]};})};
+  return `<div class="phone wide" style="--m:var(--a)"><h2 style="font-size:18px">Entrevista de admisión · ${esc(c.nino)}</h2><div id="en-body">${entrevistaBody()}</div></div>`;}
+function entrevistaBody(){const E=S.en,c=S.consultas.find(x=>x.id===E.id);
+  return `<label class="f">Lo que se habló en la entrevista<textarea class="in" data-en="notas" rows="3">${esc(E.notas)}</textarea></label>
+  <span class="flabel">Decisión</span><div class="chips">${[['admitir','Admitir'],['espera','Lista de espera'],['no','No corresponde / derivar']].map(([k,n])=>chip(E.dec===k,`data-act="enDec" data-v="${k}"`,n)).join('')}</div>
+  ${E.dec==='admitir'?`<span class="flabel">Plan de tratamiento</span>${planEditor(E.plan,'en')}`:E.dec==='no'?`<label class="f">Motivo o derivación<input class="in" data-en="motivo" value="${esc(E.motivo)}"></label>`:'<p class="small muted">Queda en la lista de espera con todos sus datos. Cuando se libere un lugar, lo avisás por WhatsApp con un toque.</p>'}
+  <div class="row"><button class="btn primary" data-act="enOk">${E.dec==='admitir'?'Admitir y crear paciente':'Guardar'}</button><button class="btn" data-act="close">Cancelar</button></div>`;}
+function planEditor(plan,ns){const dd=[1,2,3,4,5,6];
+  return `<div class="plan-ed">${plan.map((r,i)=>`<div class="pe-row"><select class="in" data-pl="${ns}" data-i="${i}" data-k="area">${AREAS.map(([k,n])=>`<option value="${k}" ${r.area===k?'selected':''}>${n}</option>`).join('')}</select>
+   <select class="in" data-pl="${ns}" data-i="${i}" data-k="proId"><option value="">Profesional…</option>${S.pros.filter(p=>p.area===r.area).map(p=>`<option value="${p.id}" ${r.proId===p.id?'selected':''}>${esc(p.n)}</option>`).join('')}</select>
+   <select class="in" data-pl="${ns}" data-i="${i}" data-k="frec">${[1,2,3].map(n=>`<option value="${n}" ${+r.frec===n?'selected':''}>${n} por semana</option>`).join('')}</select>
+   <span class="pe-dias">${r.dias.slice(0,r.frec).map((x,j)=>`<span class="row" style="flex-wrap:nowrap;gap:4px"><select class="in" data-pl="${ns}" data-i="${i}" data-j="${j}" data-k="d">${dd.map(d=>`<option value="${d}" ${+x.d===d?'selected':''}>${cap(DOW[d]).slice(0,3)}</option>`).join('')}</select><input class="in" type="time" data-pl="${ns}" data-i="${i}" data-j="${j}" data-k="h" value="${x.h}"></span>`).join('')}</span>
+   <button class="x" data-act="plDel" data-ns="${ns}" data-i="${i}" aria-label="Quitar terapia">Quitar</button>${(c=>c.length?`<div class="libres"><span class="small saldo">⚠ ${c.map(esc).join(' · ')}</span></div>`:'')(choques(r))}${r.proId&&ns!=='pp'?slotChips(r.proId,ns,i):''}</div>`).join('')}
+   <button class="btn sm" data-act="plAdd" data-ns="${ns}">+ Agregar terapia</button></div>`;}
+
+/* ---- PACIENTES ---- */
+function viewPacientes(){const q=S.q.toLowerCase(),list=S.pacientes.filter(p=>!q||p.nombre.toLowerCase().includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)),p=S.sel&&pac(S.sel);
+  return `${intro('pacientes')}<div class="pgrid${p?' has-sel':''}"><div class="card plistcard"><h2>Pacientes (${S.pacientes.length})</h2><div class="row"><button class="btn sm" data-act="nxAbrir">+ Paciente que ya viene</button><button class="btn sm" data-act="impAbrir">Importar desde Excel</button></div><input class="in" id="pq" data-q="1" placeholder="Buscar" value="${esc(S.q)}" aria-label="Buscar paciente">
+  <ul class="plist">${list.map(x=>{const falta=docsDe(x).filter(d=>!(x.docs[d[0]]||{}).ok).length;return `<li><button type="button" class="pbtn" aria-current="${S.sel===x.id}" data-act="ficha" data-v="${x.id}"><span class="av">${iniciales(x.nombre)}</span><span><b>${esc(x.nombre)}</b><small>${x.prest.map(pr=>CORTO[pr.area]).join(' · ')}${falta?` · <span class="saldo">${falta===1?'falta 1 papel':`faltan ${falta} papeles`}</span>`:''}</small></span></button></li>`;}).join('')}</ul></div>
+  <div class="card" id="ficha">${p?`<button type="button" class="btn sm backp" data-act="backP">← Todos los pacientes</button>${fichaHTML(p)}`:'<p class="empty">Elegí un paciente.</p>'}</div></div>`;}
+function fichaHTML(p){const o=obraBy(p.osId);const T=[['plan','Plan de tratamiento'],['hc','Historia clínica'],['docs','Documentación'],['asis','Asistencia'],['inf','Informes'],['datos','Datos y familia']];
+  const B={plan:planHTML,hc:hcHTML,docs:docsHTML,asis:asisHTML,inf:infHTML,datos:datosHTML}[S.ftab]||planHTML;
+  return `<div class="fhead"><span class="av">${iniciales(p.nombre)}</span><div style="flex:1;min-width:180px"><h2>${esc(p.nombre)}</h2><span class="small muted">${p.fnac?edad(p.fnac)+' años · ':''}${esc(p.dx||'Sin diagnóstico')} · ${esc(o.n)}${p.afiliado?' N.º '+esc(p.afiliado):''}${p.cudVence?' · CUD vence '+fechaCorta(parseYmd(p.cudVence)):''}</span></div></div>
+  <div class="ftabs" role="tablist">${T.map(([k,n])=>`<button class="ftab" role="tab" aria-selected="${S.ftab===k}" data-act="ftab" data-v="${k}">${n}</button>`).join('')}</div>${B(p)}`;}
+function planHTML(p){const y=new Date().getFullYear(),ny=y+1,pr=S.presup[p.id+'|'+ny];
+  return `${S.planEdit===p.id?`${planEditor(S.planTmp,'pp')}<div class="row"><button class="btn primary" data-act="planOk">Guardar plan</button><button class="btn" data-act="planCancel">Cancelar</button></div>`:
+  `<ul class="slots">${p.prest.map(pr=>`<li class="slot"><span class="hr" style="font-size:13px;min-width:60px">${pr.frec}× sem</span><div class="who"><b>${areaN(pr.area)}</b><span class="small muted">${esc(proBy(pr.proId).n)} · ${pr.dias.map(x=>cap(DOW[x.d]).slice(0,3)+' '+x.h).join(', ')} · ${MESN(pr.desde+'').split(' ')[0]} a ${MESN(pr.hasta)}</span></div></li>`).join('')}</ul>
+  <div class="row"><button class="btn sm" data-act="planEdit">Cambiar plan</button><button class="btn sm${pr?'':' primary'}" data-act="presPdf" data-v="${p.id}">Presupuesto ${ny} en PDF</button>${pr?`<span class="small muted">Hecho el ${fechaCorta(pr.t)}</span>`:''}</div>`}`;}
+function docsHTML(p){const o=obraBy(p.osId),falta=docsDe(p).filter(d=>!(p.docs[d[0]]||{}).ok),mesAct=hoyS().slice(0,7),mk=S.mensual[p.id+'|'+mesAct];
+  return `<p class="small muted">Lo que pide la obra social para el legajo. Cuando la familia manda una foto por WhatsApp, la cargás acá.</p>
+  <ul class="docs">${docsDe(p).map(([k,n,d,vence])=>{const D=p.docs[k]||{};return `<li><span class="dk ${D.ok?'ok':''}">${D.ok?'✓':'!'}</span><div><b>${n}</b>${d?`<small>${d}</small>`:''}${D.ok&&D.archivo?`<small>Archivo: ${esc(D.archivo)}</small>`:''}${k==='cud'&&p.cudVence?`<small>Vence el ${fechaCorta(parseYmd(p.cudVence))}</small>`:''}</div>
+  <div class="row">${D.ok?`<span class="pill ok">Cargado ${D.t?fechaCorta(D.t).slice(0,5):''}</span>`:'<span class="pill warn">Falta</span>'}<label class="btn sm">${D.ok?'Cambiar':'Cargar foto'}<input type="file" accept="image/*,application/pdf" data-doc="${k}" hidden></label>${!D.ok?`<button class="x" data-act="docOk" data-v="${k}">Ya lo tenemos en papel</button>`:''}</div></li>`;}).join('')}
+  ${(o.codem||o.aut)?`<li><span class="dk ${mk?'ok':''}">${mk?'✓':'!'}</span><div><b>${o.codem?'CODEM':''}${o.codem&&o.aut?' / ':''}${o.aut?'Autorización':''} de ${MESN(mesAct)}</b><small>${esc(o.n)} lo pide todos los meses</small></div><div class="row">${mk?`<span class="pill ok">Cargado</span>`:'<span class="pill warn">Falta</span>'}${!mk?`<button class="btn sm" data-act="mensOk" data-v="${p.id}">Marcar cargado</button>`:''}</div></li>`:''}</ul>
+  ${falta.length?`<a class="btn wa" href="${waLink(p.tel,`Hola ${p.familiar.split(' ')[0]}, te escribimos de ${CEN.corto}. Para presentar a ${o.n} nos falta de ${p.nombre.split(' ')[0]}:\n${falta.map(d=>'• '+d[1]).join('\n')}\nNos lo podés mandar por acá en foto. ¡Gracias!`)}" target="_blank" rel="noopener">Pedir lo que falta por WhatsApp (${falta.length})</a>`:'<p class="small"><span class="pagado">Legajo completo.</span></p>'}`;}
+function asisHTML(p){const mes=S.mesP||mesCierre();
+  return `<div class="cardhead"><h3>Asistencia</h3><div class="row"><button class="btn sm" data-act="mesP" data-v="-1">←</button><b>${cap(MESN(mes))}</b><button class="btn sm" data-act="mesP" data-v="1">→</button></div></div>
+  ${p.prest.map(pr=>{const r=resumenMes(p,pr,mes);return `<div class="asis"><div class="cardhead"><b>${areaN(pr.area)} · ${esc(proBy(pr.proId).n)}</b><span class="small muted">${r.P} presentes · ${r.A} ausentes${r.sin?` · ${r.sin} sin marcar`:''}</span></div>
+  <div class="asis-d">${r.ss.map(s=>{const v=S.asis[akey(p.id,pr.id,s.f)]||'',fut=s.f>hoyS();return `<button type="button" class="ad ${v==='P'?'p':v==='A'?'a':''}" data-act="asisT" data-k="${akey(p.id,pr.id,s.f)}" ${fut?'disabled':''} title="${cap(fechaLarga(s.f))} ${s.h}"><b>${dm(s.f)}</b><small>${v==='P'?'Vino':v==='A'?'Faltó':fut?'—':'Marcar'}</small></button>`;}).join('')||'<span class="small muted">Sin sesiones este mes.</span>'}</div>
+  <div class="row"><button class="btn sm" data-act="planillaPdf" data-k="${p.id+'|'+pr.id+'|'+mes}">Planilla para firmar (PDF)</button></div></div>`;}).join('')}`;}
+function infHTML(p){const y=new Date().getFullYear(),hoy=hoyS();
+  if(S.infEd&&S.infEd.pid===p.id){const I=S.infEd,pr=p.prest.find(x=>x.id===I.prid);return `<div class="cardhead"><h3>${I.n} ${y} · ${areaN(pr.area)}</h3><button class="x" data-act="infCancel">Volver</button></div>
+   ${[['evo','Evolución en el período'],['obj','Objetivos trabajados'],['plan','Plan y objetivos para el próximo período']].map(([k,n])=>`<label class="f">${n}<textarea class="in" rows="4" data-inf="${k}">${esc(I[k]||'')}</textarea></label>`).join('')}
+   <p class="small muted">Asistencia del período: se completa sola en el PDF.</p><button class="btn primary big" data-act="infOk">Generar informe en PDF</button>`;}
+  return `<p class="small muted">Tres informes por año por cada terapia. La app avisa cuáles faltan y arma el PDF con los datos del chico, la asistencia del período y la firma del profesional.</p>
+  ${prestVis(p).map(pr=>`<div class="asis"><b>${areaN(pr.area)} · ${esc(proBy(pr.proId).n)}</b><div class="infgrid">${cuatris(y).map(c=>{const I=S.informes[ikey(p.id,pr.id,y,c.i)];let est,cls,btn='';
+   if(I){est='Hecho el '+fechaCorta(I.t).slice(0,5);cls='ok';btn=`<button class="btn sm" data-act="infPdf" data-k="${ikey(p.id,pr.id,y,c.i)}">PDF</button>`;}
+   else if(ymd(new Date(p.alta))>c.hasta){est='No corresponde';cls='done';}
+   else if(hoy>c.hasta){est='Atrasado';cls='act';btn=`<button class="btn sm primary" data-act="infArmar" data-prid="${pr.id}" data-i="${c.i}">Armar</button>`;}
+   else if(hoy>=c.desde){est='En curso';cls='prog';btn=`<button class="btn sm primary" data-act="infArmar" data-prid="${pr.id}" data-i="${c.i}">Armar</button>`;}
+   else{est='Todavía no';cls='done';}
+   return `<div class="infcard"><b>${c.n}</b><small>${cap(c.lab)}</small><span class="pill ${cls}">${est}</span>${btn}</div>`;}).join('')}</div></div>`).join('')}`;}
+function datosHTML(p){const o=obraBy(p.osId);return `<div class="cc-grid"><span><i>Familiar</i>${esc(p.familiar)} (${esc(p.parentesco)})</span><span><i>WhatsApp</i>${esc(p.tel)}</span><span><i>DNI</i>${esc(p.dni||'—')}</span><span><i>Obra social</i>${esc(o.n)} ${esc(p.afiliado||'')}</span><span><i>Diagnóstico</i>${esc(p.dx||'—')}</span><span><i>En tratamiento desde</i>${fechaCorta(p.alta)}</span></div>
+  ${p.entNotas?`<p class="small"><b>Entrevista de admisión:</b> ${esc(p.entNotas)}</p>`:''}<a class="btn sm wa" href="${waLink(p.tel,'')}" target="_blank" rel="noopener">Escribirle a ${esc(p.familiar.split(' ')[0])}</a>`;}
+
+/* ---- PROFESIONAL ---- */
+const sesPro=(proId,f)=>sesionesDelDia(f).filter(s=>s.pr&&s.pr.proId===proId);
+function viewSes(){const P=yo();if(!S.psDay){for(let i=0;i<10;i++){const f=ymd(addDays(new Date(),-i));if(sesPro(P.id,f).length){S.psDay=f;break;}}S.psDay=S.psDay||hoyS();}
+  const f=S.psDay,base=parseYmd(f),lunes=addDays(base,-((base.getDay()+6)%7)),days=[...Array(6)].map((_,i)=>ymd(addDays(lunes,i))),L=sesPro(P.id,f);
+  return `${intro('ses')}<div class="card"><div class="cardhead"><h2>Semana</h2><div class="row"><button class="btn sm" data-act="psWk" data-v="-7">←</button><button class="btn sm" data-act="psWk" data-v="0">Hoy</button><button class="btn sm" data-act="psWk" data-v="7">→</button></div></div>
+  <div class="days">${days.map(d=>{const n=sesPro(P.id,d).length;return `<button type="button" class="day" aria-pressed="${d===f}" data-act="psDay" data-v="${d}"><small>${DCORTO[parseYmd(d).getDay()]}</small><b>${parseYmd(d).getDate()}</b><span class="cnt2">${n?n+' ses.':'—'}</span></button>`;}).join('')}</div></div>
+  <div class="card"><h2>${cap(fechaLarga(f))}</h2>${L.length?`<ul class="sesl">${L.map(s=>sesCard(s)).join('')}</ul>`:'<p class="empty">No tenés sesiones este día.</p>'}</div>`;}
+function sesCard(s){const k=akey(s.p.id,s.pr.id,s.f),v=S.asis[k]||'',notas=S.hc.filter(n=>n.pid===s.p.id&&n.prid===s.pr.id&&n.f===s.f).sort((a,b)=>a.t-b.t),fut=s.f>hoyS();
+  return `<li class="sescard"><div class="cardhead"><div><b>${s.h} · ${esc(s.p.nombre)}</b><br><span class="small muted">${areaN(s.pr.area)}${s.p.fnac?' · '+edad(s.p.fnac)+' años':''}${s.p.dx?' · '+esc(s.p.dx):''}</span></div>
+  ${fut?'<span class="small muted">Todavía no</span>':`<span class="pa"><button type="button" class="${v==='P'?'on':''}" data-act="asisSet" data-k="${k}" data-v="P">Vino</button><button type="button" class="${v==='A'?'on':''}" data-act="asisSet" data-k="${k}" data-v="A">Faltó</button></span>`}</div>
+  ${notas.map(n=>`<div class="nota"><span class="small muted">Guardada en la historia · ${fechaCorta(n.t)} ${pad2(new Date(n.t).getHours())}:${pad2(new Date(n.t).getMinutes())}</span><p>${esc(n.texto)}</p></div>`).join('')}
+  ${!fut&&v!=='A'?`<div class="field"><span class="lab"><label for="nt-${k}">${notas.length?'Agregar algo más':'Nota de la sesión'}</label><button type="button" class="mic" data-act="mic" data-target="nt-${k}">🎙 Dictar</button></span><textarea class="in" id="nt-${k}" rows="3" placeholder="Qué se trabajó, cómo estuvo, qué sigue"></textarea><div><button class="btn sm primary" data-act="notaOk" data-k="${k}">Guardar en la historia</button></div></div>`:''}</li>`;}
+function hcHTML(p){const mine=isPro()&&!S.verEquipo;const N=S.hc.filter(n=>n.pid===p.id&&(!mine||n.proId===S.rol)).sort((a,b)=>a.f.localeCompare(b.f)||a.t-b.t);
+  return `<div class="sheetbar"><span class="file"><span class="gs" aria-hidden="true"></span>HC · ${esc(p.nombre)}</span><span class="muted">Drive del centro › Pacientes › ${esc(p.nombre)}</span><span class="lock">🔒 Solo se agregan filas</span></div>
+  ${isPro()?`<label class="ck small"><input type="checkbox" data-vereq="1" ${S.verEquipo?'checked':''}> Ver también las notas del resto del equipo</label>`:''}
+  ${N.length?`<div class="sheet"><table><thead><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr></thead><tbody><tr class="hdr"><th>1</th><td>Fecha</td><td>Terapia</td><td>Profesional</td><td>Nota de la sesión</td></tr>${N.map((n,i)=>{const pr=p.prest.find(x=>x.id===n.prid)||{};return `<tr class="${n.id===S.lastNota?'new':''}"><th>${i+2}</th><td>${fechaCorta(parseYmd(n.f))}</td><td>${areaN(pr.area)}</td><td>${esc(proBy(n.proId).n)}</td><td>${esc(n.texto)}</td></tr>`;}).join('')}</tbody></table></div>`:'<p class="empty">Todavía no hay notas de sesión.</p>'}`;}
+function viewMisPac(){const P=yo(),list=S.pacientes.filter(p=>p.prest.some(pr=>pr.proId===P.id)).sort((a,b)=>a.nombre.localeCompare(b.nombre)),p=S.sel&&list.find(x=>x.id===S.sel);
+  if(!['hc','inf','datos'].includes(S.ftab))S.ftab='hc';
+  return `${intro('mispac')}<div class="pgrid${p?' has-sel':''}"><div class="card plistcard"><h2>Tus pacientes (${list.length})</h2><ul class="plist">${list.map(x=>`<li><button type="button" class="pbtn" aria-current="${S.sel===x.id}" data-act="pficha" data-v="${x.id}"><span class="av">${iniciales(x.nombre)}</span><span><b>${esc(x.nombre)}</b><small>${prestVis(x).map(pr=>pr.dias.map(d=>DCORTO[d.d]+' '+d.h).join(', ')).join(' · ')}</small></span></button></li>`).join('')}</ul></div>
+  <div class="card" id="ficha">${p?`<button type="button" class="btn sm backp" data-act="backP">← Tus pacientes</button><div class="fhead"><span class="av">${iniciales(p.nombre)}</span><div><h2>${esc(p.nombre)}</h2><span class="small muted">${p.fnac?edad(p.fnac)+' años · ':''}${esc(p.dx||'Sin diagnóstico')} · ${esc(obraBy(p.osId).n)}</span></div></div>
+  <div class="ftabs" role="tablist">${[['hc','Historia (Drive)'],['inf','Informes'],['datos','Familia']].map(([k,n])=>`<button class="ftab" role="tab" aria-selected="${S.ftab===k}" data-act="ftab" data-v="${k}">${n}</button>`).join('')}</div>${S.ftab==='inf'?infHTML(p):S.ftab==='datos'?datosHTML(p):hcHTML(p)}`:'<p class="empty">Elegí un paciente.</p>'}</div></div>`;}
+function viewDisp(){const P=yo(),L=libres(P.id),oc=ocupados(P.id);
+  return `${intro('disp')}<div class="owner-grid"><div class="card"><h2>Cuándo podés venir</h2>${[1,2,3,4,5,6].map(d=>{const r=(P.disp||{})[d]||[];const man=r.find(q=>toMin(q[0])<13*60),tar=r.find(q=>q!==man);const [a,b]=man||['',''];const [x,y]=tar||['',''];
+   return `<div class="week"><span class="dn">${cap(DOW[d])}</span><label class="f">Mañana<span class="row" style="flex-wrap:nowrap"><input class="in" type="time" data-disp="${d}" data-k="0a" value="${a}"><input class="in" type="time" data-disp="${d}" data-k="0b" value="${b}"></span></label><label class="f">Tarde<span class="row" style="flex-wrap:nowrap"><input class="in" type="time" data-disp="${d}" data-k="1a" value="${x}"><input class="in" type="time" data-disp="${d}" data-k="1b" value="${y}"></span></label><button class="x" data-act="dispNo" data-v="${d}">No vengo</button></div>`;}).join('')}
+   <label class="f">Duración de cada sesión (minutos)<input class="in" data-pdur="1" inputmode="numeric" value="${P.dur||45}" style="max-width:120px"></label></div>
+  <div class="card"><h2>Cómo queda tu semana</h2><p class="small muted">${oc.length} sesiones fijas y ${nLibres(P.id)} horarios libres.</p>${[1,2,3,4,5,6].map(d=>{const o=oc.filter(x=>x.d===d),l=L[d];if(!o.length&&!l.length)return '';
+   return `<div class="dispday"><b>${cap(DOW[d])}</b><div class="chips">${o.map(x=>`<span class="slotc oc">${x.h} ${esc(x.p.nombre.split(' ')[0])}</span>`).join('')}${l.map(h=>`<span class="slotc lib">${h} libre</span>`).join('')}</div></div>`;}).join('')||'<p class="empty">Cargá tus días y horarios.</p>'}</div></div>`;}
+function slotChips(proId,ns,i){const L=libres(proId),c=[];[1,2,3,4,5,6].forEach(d=>L[d].forEach(h=>c.push([d,h])));
+  return c.length?`<div class="libres"><span class="small muted">Horarios libres de ${esc(proBy(proId).n.replace('Lic. ',''))}:</span> ${c.slice(0,14).map(([d,h])=>`<button type="button" class="slotc lib" data-act="plSlot" data-ns="${ns}" data-i="${i}" data-d="${d}" data-h="${h}">${DCORTO[d]} ${h}</button>`).join('')}${c.length>14?` <span class="small muted">y ${c.length-14} más</span>`:''}</div>`:`<div class="libres"><span class="small saldo">${esc(proBy(proId).n)} no tiene horarios libres: lista de espera o pedirle más disponibilidad.</span></div>`;}
+/* importar pacientes existentes */
+const PLANT_COLS=['Paciente','Fecha de nacimiento','DNI','Obra social','N.º afiliado','Familiar','WhatsApp','Diagnóstico','Terapia','Profesional','Día 1','Hora 1','Día 2','Hora 2','Día 3','Hora 3'];
+const EJEMPLO=[['Martina Suárez','15/03/2018','46.221.330','OSDE','61 300 2211 1','Gabriela Suárez','1170001111','TEA','Terapia ocupacional','Micaela Duarte','Martes','16:00','Jueves','16:00','',''],['Martina Suárez','15/03/2018','46.221.330','OSDE','61 300 2211 1','Gabriela Suárez','1170001111','TEA','Fonoaudiología','Agustina Paz','Lunes','17:00','Miércoles','17:00','',''],['Lucas Romero','02/11/2016','44.880.120','IOMA','44880120/01','Pablo Romero','1170002222','Dislexia','Psicopedagogía','Rocío Benítez','Viernes','15:00','','','','']];
+const norm=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/^lic\.?\s*/,'').trim();
+function parseImport(txt){const lines=txt.split(/\r?\n/).filter(l=>l.trim());if(!lines.length)return {pac:[],err:['No hay filas para importar.']};const dl=lines[0].includes('\t')?'\t':lines[0].includes(';')?';':',';
+  const rows=lines.map(l=>l.split(dl).map(c=>c.replace(/^"|"$/g,'').trim()));if(/paciente/i.test(rows[0][0]))rows.shift();const G={},err=[];
+  const DIAS={lun:1,mar:2,mie:3,jue:4,vie:5,sab:6};
+  rows.forEach((r,i)=>{const [nom,fn,dni,os,af,fam,tel,dx,ter,prof,...dh]=r;if(!nom){return;}const n=i+2;
+    const area=AREAS.find(([k,a])=>norm(a).startsWith(norm(ter))||norm(ter).startsWith(norm(a).split(' ')[0])||norm(CORTO[k])===norm(ter));if(!area){err.push(`Fila ${n}: no reconozco la terapia "${ter}".`);return;}
+    const pro=S.pros.find(p=>norm(p.n).includes(norm(prof))&&norm(prof))||S.pros.find(p=>p.area===area[0]);
+    const dias=[];for(let j=0;j<dh.length;j+=2){const d=DIAS[norm(dh[j]).slice(0,3)];const h=(dh[j+1]||'').match(/^(\d{1,2}):(\d{2})/);if(d&&h)dias.push({d,h:pad2(+h[1])+':'+h[2]});else if(dh[j])err.push(`Fila ${n}: revisá el día u hora "${dh[j]} ${dh[j+1]||''}".`);}
+    if(!dias.length){err.push(`Fila ${n}: falta el día y la hora de ${area[1]}.`);return;}
+    let fnac='';const m=(fn||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);if(m)fnac=`${m[3]}-${pad2(m[2])}-${pad2(m[1])}`;else if(/^\d{4}-\d{2}-\d{2}$/.test(fn||''))fnac=fn;
+    const o=S.obras.find(x=>norm(x.n)===norm(os));const key=norm(nom)+'|'+(dni||'');
+    const P=G[key]=G[key]||{nombre:nom,fnac,dni:dni||'',osId:o?o.id:'',afiliado:af||'',familiar:fam||'',parentesco:'Familiar',tel:tel||'',dx:dx||'',prest:[]};
+    P.prest.push({area:area[0],proId:pro?pro.id:'',frec:dias.length,dias});});
+  return {pac:Object.values(G),err};}
+function importHTML(){return `<div class="phone wide" style="--m:var(--a)"><h2 style="font-size:18px">Cargar los pacientes que ya vienen</h2>
+  <ol class="small" style="margin:0;padding-left:18px"><li>Descargá la plantilla y completala en Excel o Google Sheets: una fila por cada terapia de cada chico.</li><li>Seleccioná las filas, copialas y pegalas acá abajo (o subí el archivo).</li><li>Revisás y listo: arman solos la agenda y la disponibilidad de cada profesional.</li></ol>
+  <div class="row"><button class="btn sm" data-act="impPlantilla">Descargar plantilla</button><button class="btn sm" data-act="impEjemplo">Probar con un ejemplo</button><label class="btn sm">Subir archivo .csv<input type="file" accept=".csv,text/csv,text/plain" data-imp="1" hidden></label></div>
+  <textarea class="in" id="imp-txt" rows="7" placeholder="Pegá acá las filas copiadas de la planilla"></textarea>
+  <button class="btn" data-act="impVer">Revisar</button><div id="imp-res"></div><button class="btn" data-act="close">Cerrar</button></div>`;}
+function impResHTML(R){S.impData=R;return `${R.err.length?`<div class="notice">${R.err.map(esc).join('<br>')}</div>`:''}${R.pac.length?`<div class="tablewrap"><table class="det"><thead><tr><th>Paciente</th><th>Obra social</th><th>Terapias</th></tr></thead><tbody>${R.pac.map(p=>`<tr><td><b>${esc(p.nombre)}</b>${S.pacientes.some(x=>norm(x.nombre)===norm(p.nombre))?' <span class="pill warn">Ya existe</span>':''}</td><td>${esc(obraBy(p.osId).n)}</td><td class="small">${p.prest.map(pr=>{const c=choques(pr);return `${areaN(pr.area)} con ${esc(proBy(pr.proId).n)}: ${pr.dias.map(d=>DCORTO[d.d]+' '+d.h).join(', ')}${c.length?`<br><span class="saldo">⚠ ${c.map(esc).join(' · ')}</span>`:''}`;}).join('<br>')}</td></tr>`).join('')}</tbody></table></div>
+  <button class="btn primary" data-act="impOk">Importar ${R.pac.filter(p=>!S.pacientes.some(x=>norm(x.nombre)===norm(p.nombre))).length} pacientes</button>`:''}`;}
+function nxHTML(){S.nx={nombre:'',fnac:'',dni:'',osId:'',afiliado:'',familiar:'',parentesco:'Mamá',tel:'',dx:'',cudVence:'',plan:[{area:'to',proId:(S.pros.find(p=>p.area==='to')||{}).id||'',frec:2,dias:autoDias((S.pros.find(p=>p.area==='to')||{}).id,2)}]};
+  return `<div class="phone wide" style="--m:var(--a)"><h2 style="font-size:18px">Paciente que ya viene al centro</h2><div id="nx-body">${nxBody()}</div></div>`;}
+function nxBody(){const n=S.nx;return `<div class="fields">${[['nombre','Nombre y apellido'],['fnac','Fecha de nacimiento','date'],['dni','DNI'],['familiar','Familiar'],['tel','WhatsApp'],['dx','Diagnóstico'],['afiliado','N.º de afiliado'],['cudVence','CUD vence','date']].map(([k,l,t])=>`<label class="f">${l}<input class="in" ${t?`type="${t}"`:''} data-nx="${k}" value="${esc(n[k])}"></label>`).join('')}
+  <label class="f">Obra social<select class="in" data-nx="osId"><option value="">Particular</option>${S.obras.map(o=>`<option value="${o.id}" ${n.osId===o.id?'selected':''}>${esc(o.n)}</option>`).join('')}</select></label></div>
+  <span class="flabel">Terapias, con quién y en qué horario viene hoy</span>${planEditor(n.plan,'nx')}<div class="row"><button class="btn primary" data-act="nxOk">Guardar paciente</button><button class="btn" data-act="close">Cancelar</button></div>`;}
+
+/* ---- AGENDA ---- */
+function viewAgenda(){const base=S.week?parseYmd(S.week):new Date(),lunes=addDays(base,-((base.getDay()+6)%7));const days=[...Array(6)].map((_,i)=>ymd(addDays(lunes,i)));const hoy=hoyS();
+  return `${intro('agenda')}<div class="card"><div class="cardhead"><h2>Semana del ${dm(days[0])} al ${dm(days[5])}</h2><div class="row"><button class="btn sm" data-act="wk" data-v="-7">←</button><button class="btn sm" data-act="wk" data-v="0">Esta semana</button><button class="btn sm" data-act="wk" data-v="7">→</button></div></div>
+  <div class="chips">${chip(!S.agPro,'data-act="agPro" data-v=""','Todos')}${S.pros.map(p=>chip(S.agPro===p.id,`data-act="agPro" data-v="${p.id}"`,esc(p.n.replace('Lic. ','')))).join('')}</div></div>
+  <div class="week6">${days.map(f=>{const L=sesionesDelDia(f).filter(s=>!S.agPro||(s.pr&&s.pr.proId===S.agPro));return `<div class="wday${f===hoy?' today':''}"><h3>${cap(DOW[parseYmd(f).getDay()])} ${dm(f)}</h3>${S.cfg.feriados.includes(f)?'<p class="small muted">Feriado</p>':''}
+   ${L.map(s=>{if(s.adm)return `<div class="ses adm"><b>${s.h}</b> Entrevista de admisión<br><span>${esc(s.adm.nino)}</span></div>`;const k=akey(s.p.id,s.pr.id,f),v=S.asis[k]||'';return `<div class="ses${v==='P'?' p':v==='A'?' a':''}"><b>${s.h}</b> ${esc(s.p.nombre.split(' ')[0])} ${esc(s.p.nombre.split(' ')[1]||'').charAt(0)}.<br><span>${areaN(s.pr.area)} · ${esc(proBy(s.pr.proId).n.replace('Lic. ',''))}</span>
+   ${f<=hoy?`<span class="pa"><button type="button" class="${v==='P'?'on':''}" data-act="asisSet" data-k="${k}" data-v="P">Vino</button><button type="button" class="${v==='A'?'on':''}" data-act="asisSet" data-k="${k}" data-v="A">Faltó</button></span>`:''}</div>`;}).join('')||'<p class="small muted">Sin sesiones.</p>'}</div>`;}).join('')}</div>`;}
+
+/* ---- FIN DE MES ---- */
+function viewMes(){const mes=mesCierre(),y=+mes.slice(0,4),ny=new Date().getFullYear()+1;const filas=[];S.pacientes.forEach(p=>p.prest.forEach(pr=>{const r=resumenMes(p,pr,mes);if(r.ss.length)filas.push({p,pr,r,k:p.id+'|'+pr.id+'|'+mes,st:(S.planillas[p.id+'|'+pr.id+'|'+mes]||{}).estado||'pendiente'});}));
+  const firm=filas.filter(x=>x.st!=='pendiente').length;const fact={};filas.forEach(x=>{const o=obraBy(x.p.osId),k=x.p.osId||'part';(fact[k]=fact[k]||{n:o.n,ses:0,tot:0});fact[k].ses+=x.r.P;fact[k].tot+=x.r.P*o.valor;});
+  const pend=S.pacientes.filter(p=>{const o=obraBy(p.osId);return (o.codem||o.aut)&&ymd(new Date(p.alta)).slice(0,7)<=mes&&!S.mensual[p.id+'|'+mes];});
+  const ST={pendiente:['Sin firmar','warn'],firmada:['Firmada','prog'],presentada:['Presentada','ok']};
+  return `${intro('mes')}<div class="card"><div class="cardhead"><h2>Mes</h2><div class="row"><button class="btn sm" data-act="mesNav" data-v="-1">←</button><b style="min-width:140px;text-align:center">${cap(MESN(mes))}</b><button class="btn sm" data-act="mesNav" data-v="1">→</button></div></div>
+  <div class="liqnums"><div><span>Planillas firmadas</span><b>${firm} de ${filas.length}</b></div><div><span>Sesiones realizadas</span><b>${filas.reduce((s,x)=>s+x.r.P,0)}</b></div><div><span>CODEM / autorizaciones que faltan</span><b>${pend.length}</b></div><div class="hl"><span>Para facturar</span><b>${fmt(Object.values(fact).reduce((s,f)=>s+f.tot,0))}</b></div></div></div>
+  <div class="card"><div class="cardhead"><h2>Planillas de asistencia</h2><span class="small muted">Una por chico y por terapia, para que firme la familia</span></div>
+  <div class="tablewrap"><table class="det"><thead><tr><th>Paciente</th><th>Terapia</th><th>Obra social</th><th class="r">Vino</th><th class="r">Faltó</th><th>Planilla</th><th></th></tr></thead><tbody>${filas.map(x=>`<tr><td><b>${esc(x.p.nombre)}</b></td><td>${areaN(x.pr.area)}</td><td>${esc(obraBy(x.p.osId).n)}</td><td class="r num">${x.r.P}</td><td class="r num">${x.r.A}${x.r.sin?` <span class="small saldo">(${x.r.sin} sin marcar)</span>`:''}</td><td><span class="pill ${ST[x.st][1]}">${ST[x.st][0]}</span></td>
+  <td><div class="row" style="flex-wrap:nowrap"><button class="btn sm" data-act="planillaPdf" data-k="${x.k}">PDF</button>${x.st==='pendiente'?`<button class="btn sm" data-act="plEstado" data-k="${x.k}" data-v="firmada">Firmada</button>`:x.st==='firmada'?`<button class="btn sm" data-act="plEstado" data-k="${x.k}" data-v="presentada">Presentada</button>`:''}</div></td></tr>`).join('')}</tbody></table></div>
+  <div class="row"><button class="btn sm primary" data-act="planillasTodas">Descargar todas las planillas del mes (un PDF)</button></div></div>
+  <div class="grid"><div class="card"><h2>CODEM y autorizaciones de ${MESN(mes)}</h2>${pend.length?`<ul class="slots">${pend.map(p=>{const o=obraBy(p.osId);return `<li class="slot"><div class="who" style="grid-column:1/3"><b>${esc(p.nombre)}</b><span class="small muted">${esc(o.n)} pide ${o.codem?'CODEM':''}${o.codem&&o.aut?' y ':''}${o.aut?'autorización':''}</span></div><div class="acts"><a class="btn sm wa" href="${waLink(p.tel,`Hola ${p.familiar.split(' ')[0]}, ¿nos mandás ${o.codem?'el CODEM':'la autorización'} de ${MESN(mes)} de ${p.nombre.split(' ')[0]}? ¡Gracias!`)}" target="_blank" rel="noopener">Pedir</a><button class="btn sm" data-act="mensOkM" data-v="${p.id}">Cargado</button></div></li>`;}).join('')}</ul>`:'<p class="small"><span class="pagado">Todo cargado.</span></p>'}</div>
+  <div class="card"><h2>Para facturar a cada obra social</h2><div class="tablewrap"><table class="det"><thead><tr><th>Obra social</th><th class="r">Sesiones</th><th class="r">Total</th></tr></thead><tbody>${Object.values(fact).sort((a,b)=>b.tot-a.tot).map(f=>`<tr><td>${esc(f.n)}</td><td class="r num">${f.ses}</td><td class="r num">${fmt(f.tot)}</td></tr>`).join('')}</tbody></table></div><p class="small muted">Con los valores por sesión cargados en Configuración (de ejemplo).</p></div></div>
+  ${new Date().getMonth()>=9?`<div class="card"><div class="cardhead"><h2>Presupuestos ${ny}</h2><span class="small muted">${S.pacientes.filter(p=>S.presup[p.id+'|'+ny]).length} de ${S.pacientes.length} hechos</span></div><p class="small muted">Se arman con el plan de tratamiento de cada chico: terapias, frecuencia y valor, de enero a diciembre.</p>
+  <ul class="slots">${S.pacientes.map(p=>{const pr=S.presup[p.id+'|'+ny];return `<li class="slot"><div class="who" style="grid-column:1/3"><b>${esc(p.nombre)}</b><span class="small muted">${esc(obraBy(p.osId).n)} · ${p.prest.map(x=>areaN(x.area)+' '+x.frec+'×').join(', ')}</span></div><div class="acts">${pr?`<span class="pill ok">Hecho ${fechaCorta(pr.t).slice(0,5)}</span>`:''}<button class="btn sm${pr?'':' primary'}" data-act="presPdf" data-v="${p.id}">PDF</button></div></li>`;}).join('')}</ul></div>`:''}`;}
+
+/* ---- PROFESIONALES ---- */
+function liquidar(pro,mes){let n=0,tot=0;const det=[];S.pacientes.forEach(p=>p.prest.filter(pr=>pr.proId===pro.id).forEach(pr=>{const r=resumenMes(p,pr,mes),v=obraBy(p.osId).valor;if(r.P){n+=r.P;tot+=r.P*v;det.push({p,pr,P:r.P,v});}}));return {n,tot,paga:Math.round(tot*pro.pct/100),det};}
+function dispEquipoHTML(){const pros=S.pros.filter(p=>!S.eqArea||p.area===S.eqArea);
+  return `<div class="card"><div class="cardhead"><h2>Horarios libres del equipo</h2><span class="small muted">Para dar turnos a las nuevas admisiones</span></div>
+  <div class="chips">${chip(!S.eqArea,'data-act="eqArea" data-v=""','Todas las áreas')}${AREAS.filter(([k])=>S.pros.some(p=>p.area===k)).map(([k,n])=>chip(S.eqArea===k,`data-act="eqArea" data-v="${k}"`,n)).join('')}</div>
+  ${pros.map(p=>{const L=libres(p.id),n=nLibres(p.id);return `<div class="dispday"><b>${esc(p.n)}</b> <span class="small muted">${areaN(p.area)} · ${n} horarios libres por semana</span><div class="chips">${[1,2,3,4,5,6].filter(d=>L[d].length).map(d=>`<span class="slotc lib">${DCORTO[d]} ${L[d].join(' · ')}</span>`).join('')||'<span class="small saldo">Sin horarios libres.</span>'}</div></div>`;}).join('')}
+  <p class="small muted">Cada profesional carga su disponibilidad desde su usuario, en "Mi disponibilidad". Los horarios ocupados salen del plan de cada paciente.</p></div>`;}
+function viewPros(){const mes=S.liqMes||mesCierre();const Ls=S.pros.map(p=>liquidar(p,mes));
+  return `${intro('pros')}${dispEquipoHTML()}<div class="card"><div class="cardhead"><h2>Mes</h2><div class="row"><button class="btn sm" data-act="liqNav" data-v="-1">←</button><b style="min-width:140px;text-align:center">${cap(MESN(mes))}</b><button class="btn sm" data-act="liqNav" data-v="1">→</button></div></div>
+  <div class="liqnums" style="grid-template-columns:repeat(3,minmax(0,1fr))"><div><span>Sesiones de todos</span><b>${Ls.reduce((s,L)=>s+L.n,0)}</b></div><div><span>Facturado por sus sesiones</span><b>${fmt(Ls.reduce((s,L)=>s+L.tot,0))}</b></div><div class="hl"><span>A pagar a profesionales</span><b>${fmt(Ls.reduce((s,L)=>s+L.paga,0))}</b></div></div></div>
+  <div class="card"><div class="tablewrap"><table class="det"><thead><tr><th>Profesional</th><th>Área</th><th class="r">Cobra</th><th class="r">Sesiones</th><th class="r">Facturado</th><th class="r">A pagar</th><th></th></tr></thead><tbody>${S.pros.map((p,i)=>{const L=Ls[i];return `<tr><td><b>${esc(p.n)}</b><br><span class="small muted">${esc(p.mat)} · monotributista</span></td><td>${areaN(p.area)}</td><td class="r"><span class="row" style="flex-wrap:nowrap;justify-content:flex-end"><input class="in sm" data-pct="${p.id}" value="${p.pct}" inputmode="numeric" style="width:58px;text-align:right"> %</span></td><td class="r num">${L.n}</td><td class="r num">${fmt(L.tot)}</td><td class="r num"><b>${fmt(L.paga)}</b></td><td><button class="btn sm" data-act="liqPdf" data-v="${p.id}">PDF</button></td></tr>`;}).join('')}</tbody></table></div>
+  <p class="small muted">Cada profesional le factura al centro (factura C) por el monto a pagar. Los valores por sesión salen de cada obra social, en Configuración.</p></div>`;}
+
+/* ---- CONFIG ---- */
+function viewConfig(){const c=S.cfg;
+  return `${intro('config')}<div class="owner-grid"><div class="card"><h2>Obras sociales y prepagas</h2><div class="tablewrap"><table class="cfg"><thead><tr><th>Nombre</th><th class="r">Valor por sesión</th><th>Pide CODEM</th><th>Pide autorización</th><th>Prepaga</th></tr></thead><tbody>${S.obras.map(o=>`<tr><td><input class="in" data-ob="${o.id}" data-k="n" value="${esc(o.n)}"></td><td class="r"><input class="in" data-ob="${o.id}" data-k="valor" inputmode="numeric" value="${o.valor}"></td>${['codem','aut','prepaga'].map(k=>`<td><input type="checkbox" data-obc="${o.id}" data-k="${k}" ${o[k]?'checked':''} aria-label="${k}"></td>`).join('')}</tr>`).join('')}</tbody></table></div>
+  <label class="f">Valor por sesión particular<input class="in" data-cfg="valorParticular" inputmode="numeric" value="${c.valorParticular}" style="max-width:160px"></label><p class="small muted">Valores de ejemplo: cada centro pone los suyos.</p></div>
+  <div class="stack"><div class="card"><h2>Entrevistas de admisión</h2><span class="flabel">Días</span><div class="chips">${[1,2,3,4,5,6].map(d=>chip(c.admDias.includes(d),`data-act="admDia" data-v="${d}"`,cap(DOW[d]))).join('')}</div>
+  <label class="f">Horarios (separados por coma)<input class="in" data-cfg="admHoras" value="${c.admHoras.join(', ')}"></label></div>
+  <div class="card"><h2>Equipo</h2><ul class="plist">${S.pros.map(p=>`<li class="pbtn" style="cursor:default"><span class="av">${iniciales(p.n)}</span><span><b>${esc(p.n)}</b><small>${areaN(p.area)} · ${esc(p.mat)}</small></span></li>`).join('')}</ul></div>
+  <div class="card"><h2>Feriados</h2><span class="row"><input class="in" type="date" id="fer" style="max-width:190px"><button class="btn sm" data-act="ferAdd">Agregar</button></span><div class="chips">${c.feriados.map(f=>`<span class="chip" style="cursor:default">${dm(f)} <button class="x" data-act="ferDel" data-v="${f}" aria-label="Quitar">✕</button></span>`).join('')||'<span class="small muted">Ninguno.</span>'}</div></div></div></div>`;}
+
+/* ---------- PDF ---------- */
+function cab(d){d.sub(`${CEN.nombre} · ${CEN.dir} · Tel. ${CEN.tel}`);d.rule();}
+function datosP(d,p){const o=obraBy(p.osId);d.box([['Paciente',p.nombre],['DNI',p.dni||'—'],['Nacimiento',p.fnac?`${fechaCorta(parseYmd(p.fnac))} (${edad(p.fnac)} años)`:'—'],['Obra social',`${o.n}${p.afiliado?' · N.º '+p.afiliado:''}`],['Diagnóstico',p.dx||'—'],['CUD',p.cudVence?'Vigente hasta '+fechaCorta(parseYmd(p.cudVence)):'—']]);}
+function pdfPlanillas(keys){return pdfDoc(`Planilla de asistencia · ${CEN.corto}`,d=>{keys.forEach((k,ix)=>{const [pid,prid,mes]=k.split('|'),p=pac(pid),pr=p.prest.find(x=>x.id===prid),P=proBy(pr.proId),r=resumenMes(p,pr,mes);
+  if(ix)d.newPage();d.title('Planilla de asistencia');cab(d);d.kv('Mes',cap(MESN(mes)));d.kv('Prestación',`${areaN(pr.area)} · ${pr.frec} ${pr.frec===1?'sesión':'sesiones'} por semana`);d.kv('Profesional',`${P.n} · ${P.mat}`);d.space(4);datosP(d,p);
+  d.table([{n:'Fecha',w:14},{n:'Día',w:12},{n:'Hora',w:9},{n:'Asistencia',w:14},{n:'Firma del familiar',w:30},{n:'Aclaración',w:21}],r.ss.map(s=>{const v=S.asis[akey(p.id,pr.id,s.f)];return {v:[fechaCorta(parseYmd(s.f)),cap(DOW[parseYmd(s.f).getDay()]),s.h,v==='P'?'Presente':v==='A'?'Ausente':'',v==='P'?'______________________':'','']};}),{size:9,row:22});
+  d.p(`Total: ${r.P} ${r.P===1?'sesión realizada':'sesiones realizadas'}${r.A?`, ${r.A} ${r.A===1?'ausencia':'ausencias'}`:''}.`,{size:10,bold:true});d.sign(P.n,`${areaN(pr.area)} · ${P.mat}`,'Firma y sello del profesional');});});}
+function pdfInforme(k){const [pid,prid,y,i]=k.split('|'),p=pac(pid),pr=p.prest.find(x=>x.id===prid),P=proBy(pr.proId),C=cuatris(+y)[i-1],I=S.informes[k];let as=0,au=0;
+  const hasta=C.hasta<hoyS()?C.hasta:hoyS();sesionesDe(p,pr,C.desde,hasta).forEach(s=>{const v=S.asis[akey(p.id,pr.id,s.f)];if(v==='P')as++;else if(v==='A')au++;});
+  return pdfDoc(`Informe · ${p.nombre} · ${areaN(pr.area)}`,d=>{d.title(`Informe de evolución · ${areaN(pr.area)}`);cab(d);d.kv('Período',`${C.n} ${y} (${C.lab})`);d.kv('Profesional',`${P.n} · ${P.mat}`);d.kv('Fecha',fechaCorta(I.t));d.space(4);datosP(d,p);
+   d.h('Asistencia');d.p(`Frecuencia: ${pr.frec} por semana. En el período asistió a ${as} sesiones${au?` y faltó a ${au}`:', sin ausencias'}.`);
+   [['evo','Evolución en el período'],['obj','Objetivos trabajados'],['plan','Plan y objetivos para el próximo período']].forEach(([k2,n])=>{if(I[k2]){d.h(n);d.p(I[k2]);}});d.sign(P.n,`${areaN(pr.area)} · ${P.mat}`);});}
+function pdfPresup(p,ny){const o=obraBy(p.osId);const tot=p.prest.reduce((s,pr)=>s+pr.frec*4*o.valor,0);
+  return pdfDoc(`Presupuesto ${ny} · ${p.nombre}`,d=>{d.title(`Presupuesto de prestaciones ${ny}`);cab(d);d.kv('Destinatario',o.n);d.kv('Período',`Enero a diciembre de ${ny}`);d.kv('Fecha',fechaCorta(Date.now()));d.space(4);datosP(d,p);
+   d.table([{n:'Prestación',w:26},{n:'Profesional',w:24},{n:'Frecuencia',w:14},{n:'Sesiones/mes',w:12,r:true},{n:'Valor sesión',w:12,r:true},{n:'Mensual',w:12,r:true}],p.prest.map(pr=>({v:[areaN(pr.area),proBy(pr.proId).n,pr.frec+' por semana',String(pr.frec*4),fmt(o.valor),fmt(pr.frec*4*o.valor)]})).concat([{bold:true,v:['Total mensual','','','','',fmt(tot)]},{bold:true,v:['Total anual (12 meses)','','','','',fmt(tot*12)]}]));
+   d.p('Valores sujetos a actualización según el nomenclador vigente.',{size:8.5,gray:true});d.sign(CEN.corto,'Dirección','');});}
+function pdfLiq(pro,mes){const L=liquidar(pro,mes);return pdfDoc(`Liquidación · ${pro.n} · ${MESN(mes)}`,d=>{d.title('Liquidación mensual');cab(d);d.kv('Profesional',`${pro.n} · ${pro.mat}`);d.kv('Período',cap(MESN(mes)));d.kv('Porcentaje',`${pro.pct}% de lo facturado por sus sesiones`);d.space(4);
+  d.table([{n:'Paciente',w:30},{n:'Obra social',w:22},{n:'Sesiones',w:12,r:true},{n:'Valor',w:16,r:true},{n:'Subtotal',w:16,r:true}],L.det.map(x=>({v:[x.p.nombre,obraBy(x.p.osId).n,String(x.P),fmt(x.v),fmt(x.P*x.v)]})).concat([{bold:true,v:['Total facturado','',String(L.n),'',fmt(L.tot)]},{bold:true,v:[`A pagar (${pro.pct}%)`,'','','',fmt(L.paga)]}]));d.sign(CEN.corto,'Administración','');});}
+
+/* ---------- render ---------- */
+const modal=$('modal'),mbody=$('modal-body');let lastFocus=null;
+function openModal(h){lastFocus=document.activeElement;mbody.innerHTML=h;modal.classList.add('open');}
+function closeModal(){modal.classList.remove('open');mbody.innerHTML='';if(lastFocus&&document.contains(lastFocus))lastFocus.focus();}
+function render(){tabs();$('app').innerHTML={hoy:viewHoy,admision:viewAdmision,pacientes:viewPacientes,agenda:viewAgenda,mes:viewMes,pros:viewPros,config:viewConfig,ses:viewSes,mispac:viewMisPac,disp:viewDisp}[S.view]();}
+function go(v){S.view=v;render();window.scrollTo(0,0);}
+async function bajar(name,blob,ok){const r=await saveFile(name,blob);toast(r==='ok'?ok:'No se pudo descargar en esta vista.');}
+
+const planDe=ns=>ns==='en'?S.en.plan:ns==='nx'?S.nx.plan:S.planTmp;
+const planRedraw=ns=>{if(ns==='en')$('en-body').innerHTML=entrevistaBody();else if(ns==='nx')$('nx-body').innerHTML=nxBody();else render();};
+/* ---------- eventos ---------- */
+document.addEventListener('click',async e=>{if(e.target===modal){closeModal();return;}
+  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,v=b.dataset.v,id=b.dataset.id;
+  switch(a){
+  case 'tab':go(v);break;
+  case 'close':closeModal();break;
+  case 'cFiltro':S.cFiltro=v;render();break;
+  case 'copiarPreg':{const t=PREGUNTAS();try{await navigator.clipboard.writeText(t);toast('Preguntas copiadas: pegalas en el chat de WhatsApp.');}catch(err){openModal(`<div class="phone wide"><h2 style="font-size:18px">Preguntas para WhatsApp</h2><textarea class="in" rows="9" readonly>${esc(t)}</textarea><button class="btn" data-act="close">Listo</button></div>`);}break;}
+  case 'cNueva':openModal(consultaForm(null));break;
+  case 'cEditar':openModal(consultaForm(S.consultas.find(c=>c.id===id)));break;
+  case 'cfBusca':{const f=S.cf;f.busca=f.busca.includes(v)?f.busca.filter(x=>x!==v):f.busca.concat(v);b.setAttribute('aria-pressed',String(f.busca.includes(v)));break;}
+  case 'cfOk':{const f=S.cf;if(!f.nino.trim()||!f.familiar.trim()){toast('Poné el nombre del chico y de quien escribe.');break;}
+    if(f.id){Object.assign(S.consultas.find(c=>c.id===f.id),f);}else S.consultas.push({...f,id:nid('c'),t:Date.now(),estado:'nueva'});save();closeModal();S.cFiltro='activas';render();toast('Consulta guardada.');break;}
+  case 'cAgendar':openModal(agendarHTML(S.consultas.find(c=>c.id===id)));break;
+  case 'agSel':{const c=S.consultas.find(x=>x.id===S.ag.id);c.ent={f:b.dataset.f,h:b.dataset.h};c.estado='agendada';save();render();
+    mbody.querySelectorAll('.time').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));$('ag-res').innerHTML=`<div class="mail"><b>Entrevista agendada: ${cap(fechaLarga(c.ent.f))} ${c.ent.h} h.</b> Ya figura en la agenda.</div><a class="btn wa big" href="${waLink(c.tel,msgConfirma(c))}" target="_blank" rel="noopener">Mandar confirmación por WhatsApp</a><p class="small muted">Lleva día, hora, dirección y qué papeles traer.</p>`;break;}
+  case 'cEntrevista':openModal(entrevistaHTML(S.consultas.find(c=>c.id===id)));break;
+  case 'enDec':S.en.dec=v;$('en-body').innerHTML=entrevistaBody();break;
+  case 'plAdd':{const pid=(S.pros.find(p=>p.area==='to')||{}).id||'';planDe(b.dataset.ns).push({area:'to',proId:pid,frec:1,dias:autoDias(pid,1)});planRedraw(b.dataset.ns);break;}
+  case 'plDel':{planDe(b.dataset.ns).splice(+b.dataset.i,1);planRedraw(b.dataset.ns);break;}
+  case 'plSlot':{const r=planDe(b.dataset.ns)[+b.dataset.i];r._k=(r._k||0)%r.frec;while(r.dias.length<3)r.dias.push({d:5,h:'16:00'});r.dias[r._k]={d:+b.dataset.d,h:b.dataset.h};r._k=(r._k+1)%r.frec;planRedraw(b.dataset.ns);toast(`${DCORTO[+b.dataset.d]} ${b.dataset.h} asignado.`);break;}
+  case 'psWk':S.psDay=+v===0?null:ymd(addDays(parseYmd(S.psDay||hoyS()),+v));render();break;
+  case 'psDay':S.psDay=v;render();break;
+  case 'mic':toggleMic(b);break;
+  case 'notaOk':{const k=b.dataset.k,ta=$('nt-'+k),t=(ta&&ta.value||'').trim();if(!t){toast('Escribí o dictá la nota.');break;}const [pid,prid,f]=k.split('|');const n={id:nid('n'),pid,prid,proId:S.rol,f,t:Date.now(),texto:t};S.hc.push(n);S.lastNota=n.id;if(!S.asis[k])S.asis[k]='P';save();render();toast(`Guardada en la historia de ${pac(pid).nombre.split(' ')[0]} (planilla del Drive).`);break;}
+  case 'pficha':S.sel=v;S.ftab='hc';S.infEd=null;render();if(window.innerWidth<=900){const f=$('ficha');if(f)f.scrollIntoView({block:'start'});}break;
+  case 'dispNo':{const P=yo();P.disp=P.disp||{};P.disp[v]=[];save();render();break;}
+  case 'eqArea':S.eqArea=v;render();break;
+  case 'nxAbrir':openModal(nxHTML());break;
+  case 'nxOk':{const n=S.nx;if(n.plan.some(r=>choques(r).length)){toast('Hay horarios que chocan con otros chicos: revisá el plan.');break;}if(!n.nombre.trim()){toast('Poné el nombre.');break;}if(!n.plan.length||n.plan.some(r=>!r.proId)){toast('Elegí el profesional de cada terapia.');break;}const y=new Date().getFullYear();
+    const p={id:nid('p'),nombre:n.nombre.trim(),fnac:n.fnac,dni:n.dni,osId:n.osId,afiliado:n.afiliado,familiar:n.familiar||'—',parentesco:n.parentesco,tel:n.tel,dx:n.dx,cudVence:n.cudVence,alta:Date.now(),entNotas:'',prest:n.plan.map(r=>({id:nid('pr'),area:r.area,proId:r.proId,frec:+r.frec,dias:r.dias.slice(0,r.frec).map(x=>({d:+x.d,h:x.h})),desde:hoyS().slice(0,7),hasta:y+'-12'})),docs:{}};
+    S.pacientes.push(p);S.sel=p.id;S.ftab='docs';save();closeModal();render();toast('Paciente cargado: ya aparece en la agenda.');break;}
+  case 'impAbrir':openModal(importHTML());break;
+  case 'impPlantilla':{const q=c=>/[;"]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c;await bajar('plantilla-pacientes-senderos.csv',new Blob(['\ufeff'+[PLANT_COLS].concat(EJEMPLO).map(r=>r.map(q).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'}),'Plantilla descargada: se abre con Excel.');break;}
+  case 'impEjemplo':$('imp-txt').value=EJEMPLO.map(r=>r.join('\t')).join('\n');$('imp-res').innerHTML=impResHTML(parseImport($('imp-txt').value));break;
+  case 'impVer':$('imp-res').innerHTML=impResHTML(parseImport($('imp-txt').value));break;
+  case 'impOk':{const R=S.impData,y=new Date().getFullYear();let n=0;R.pac.forEach(x=>{if(S.pacientes.some(p=>norm(p.nombre)===norm(x.nombre)))return;S.pacientes.push({...x,id:nid('p'),cudVence:'',alta:Date.now(),entNotas:'',docs:{},prest:x.prest.map(pr=>({...pr,id:nid('pr'),desde:hoyS().slice(0,7),hasta:y+'-12'}))});n++;});save();closeModal();render();toast(`${n} pacientes importados: ya están en la agenda y en la disponibilidad del equipo.`);break;}
+  case 'enOk':{const E=S.en,c=S.consultas.find(x=>x.id===E.id);if(E.dec==='admitir'&&E.plan.some(r=>choques(r).length)){toast('Hay horarios que chocan con otros chicos: elegí uno libre.');break;}c.entNotas=E.notas.trim();
+    if(E.dec==='espera'){c.estado='espera';}else if(E.dec==='no'){c.estado='no';if(E.motivo)c.entNotas+=(c.entNotas?' · ':'')+'Motivo: '+E.motivo;}
+    else{if(!E.plan.length||E.plan.some(r=>!r.proId)){toast('Elegí el profesional de cada terapia.');break;}const y=new Date().getFullYear();
+      const p={id:nid('p'),nombre:c.nino,fnac:c.fnac,dni:'',osId:c.osId,afiliado:c.afiliado,familiar:c.familiar,parentesco:c.parentesco,tel:c.tel,dx:c.dx,cudVence:c.cud==='si'?ymd(addDays(new Date(),700)):'',alta:Date.now(),entNotas:c.entNotas,
+        prest:E.plan.map(r=>({id:nid('pr'),area:r.area,proId:r.proId,frec:+r.frec,dias:r.dias.slice(0,r.frec).map(x=>({d:+x.d,h:x.h})),desde:hoyS().slice(0,7),hasta:y+'-12'})),docs:{}};
+      if(c.orden==='si')p.docs.orden={ok:true,t:Date.now()};if(c.cud==='si')p.docs.cud={ok:true,t:Date.now()};
+      S.pacientes.push(p);c.estado='admitido';c.pacId=p.id;S.sel=p.id;S.ftab='docs';}
+    save();closeModal();if(E.dec==='admitir'){S.view='pacientes';render();toast('Paciente creado. Revisá qué papeles faltan.');}else{render();toast('Guardado.');}break;}
+  case 'ficha':S.sel=v;S.ftab='plan';S.planEdit=null;S.infEd=null;S.view='pacientes';render();if(window.innerWidth<=900){const f=$('ficha');if(f)f.scrollIntoView({block:'start'});}break;
+  case 'backP':S.sel=null;render();break;
+  case 'ftab':S.ftab=v;S.planEdit=null;S.infEd=null;render();break;
+  case 'planEdit':{const p=pac(S.sel);S.planEdit=p.id;S.planTmp=clone(p.prest).map((r,ix)=>({...r,_orig:p.prest[ix],dias:r.dias.concat([{d:5,h:'16:00'},{d:6,h:'10:00'}]).slice(0,3)}));render();break;}
+  case 'planCancel':S.planEdit=null;render();break;
+  case 'planOk':{const p=pac(S.sel);if(S.planTmp.some(r=>!r.proId)){toast('Elegí el profesional de cada terapia.');break;}const y=new Date().getFullYear();p.prest=S.planTmp.map(r=>({id:r.id||nid('pr'),area:r.area,proId:r.proId,frec:+r.frec,dias:r.dias.slice(0,r.frec).map(x=>({d:+x.d,h:x.h})),desde:r.desde||hoyS().slice(0,7),hasta:r.hasta||y+'-12'}));S.planEdit=null;save();render();toast('Plan guardado: la agenda se actualizó sola.');break;}
+  case 'docOk':{const p=pac(S.sel);p.docs[v]={ok:true,t:Date.now(),archivo:'en papel'};save();render();break;}
+  case 'mensOk':case 'mensOkM':{const mes=a==='mensOk'?hoyS().slice(0,7):mesCierre();S.mensual[v+'|'+mes]={t:Date.now()};save();render();toast('Cargado.');break;}
+  case 'mesP':S.mesP=mesMas(S.mesP||mesCierre(),+v);render();break;
+  case 'asisT':{const k=b.dataset.k,c=S.asis[k];S.asis[k]=c==='P'?'A':c==='A'?undefined:'P';if(!S.asis[k])delete S.asis[k];save();render();break;}
+  case 'asisSet':{const k=b.dataset.k;if(S.asis[k]===v)delete S.asis[k];else S.asis[k]=v;save();render();break;}
+  case 'planillaPdf':{const p=pac(b.dataset.k.split('|')[0]);await bajar(`planilla-asistencia-${slug(p.nombre)}-${b.dataset.k.split('|')[2]}.pdf`,pdfPlanillas([b.dataset.k]),'Planilla descargada: imprimila para que firme la familia.');break;}
+  case 'planillasTodas':{const mes=mesCierre(),ks=[];S.pacientes.forEach(p=>p.prest.forEach(pr=>{if(resumenMes(p,pr,mes).ss.length)ks.push(p.id+'|'+pr.id+'|'+mes);}));await bajar(`planillas-asistencia-${mes}.pdf`,pdfPlanillas(ks),`${ks.length} planillas en un solo PDF.`);break;}
+  case 'plEstado':S.planillas[b.dataset.k]={estado:v,t:Date.now()};save();render();break;
+  case 'mesNav':S.mes=mesMas(mesCierre(),+v);render();break;
+  case 'liqNav':S.liqMes=mesMas(S.liqMes||mesCierre(),+v);render();break;
+  case 'liqPdf':{const pro=S.pros.find(x=>x.id===v),mes=S.liqMes||mesCierre();await bajar(`liquidacion-${slug(pro.n)}-${mes}.pdf`,pdfLiq(pro,mes),'Liquidación descargada.');break;}
+  case 'presPdf':{const p=pac(v),ny=new Date().getFullYear()+1;S.presup[p.id+'|'+ny]={t:Date.now()};save();render();await bajar(`presupuesto-${ny}-${slug(p.nombre)}.pdf`,pdfPresup(p,ny),`Presupuesto ${ny} descargado.`);break;}
+  case 'infArmar':{const c=cuatris(new Date().getFullYear())[+b.dataset.i-1];const N=S.hc.filter(n=>n.pid===S.sel&&n.prid===b.dataset.prid&&n.f>=c.desde&&n.f<=c.hasta).sort((a,b2)=>a.f.localeCompare(b2.f));S.infEd={pid:S.sel,prid:b.dataset.prid,i:+b.dataset.i,n:c.n,evo:N.length?'Borrador con las notas de sesión del período (revisalo y resumilo):\n'+N.map(n=>dm(n.f)+': '+n.texto).join('\n'):'',obj:'',plan:''};render();break;}
+  case 'infCancel':S.infEd=null;render();break;
+  case 'infOk':{const I=S.infEd,k=ikey(I.pid,I.prid,new Date().getFullYear(),I.i);if(!I.evo.trim()){toast('Escribí la evolución.');break;}S.informes[k]={t:Date.now(),evo:I.evo,obj:I.obj,plan:I.plan};S.infEd=null;save();render();await bajar(`informe-${slug(pac(I.pid).nombre)}-${k.split('|')[3]}.pdf`,pdfInforme(k),'Informe guardado y descargado.');break;}
+  case 'infPdf':await bajar(`informe-${slug(pac(b.dataset.k.split('|')[0]).nombre)}.pdf`,pdfInforme(b.dataset.k),'Informe descargado.');break;
+  case 'wk':S.week=+v===0?null:ymd(addDays(S.week?parseYmd(S.week):new Date(),+v));render();break;
+  case 'agPro':S.agPro=v;render();break;
+  case 'admDia':{const d=+v;S.cfg.admDias=S.cfg.admDias.includes(d)?S.cfg.admDias.filter(x=>x!==d):S.cfg.admDias.concat(d).sort();save();render();break;}
+  case 'ferAdd':{const f=$('fer').value;if(f&&!S.cfg.feriados.includes(f)){S.cfg.feriados.push(f);S.cfg.feriados.sort();save();render();}break;}
+  case 'ferDel':S.cfg.feriados=S.cfg.feriados.filter(x=>x!==v);save();render();break;
+  }});
+document.addEventListener('input',e=>{const el=e.target;
+  if(el.dataset.cf&&S.cf){S.cf[el.dataset.cf]=el.value;return;}
+  if(el.dataset.nx&&S.nx){S.nx[el.dataset.nx]=el.value;return;}
+  if(el.dataset.en&&S.en){S.en[el.dataset.en]=el.value;return;}
+  if(el.dataset.inf&&S.infEd){S.infEd[el.dataset.inf]=el.value;return;}
+  if(el.dataset.q){S.q=el.value;const pos=el.selectionStart;render();const n=$('pq');if(n){n.focus();n.setSelectionRange(pos,pos);}return;}});
+document.addEventListener('change',e=>{const el=e.target;
+  if(el.dataset.rol){S.rol=el.value;S.view=views()[0];S.sel=null;S.psDay=null;S.infEd=null;S.ftab=isPro()?'hc':'plan';save();render();window.scrollTo(0,0);toast(isPro()?`Así lo ve ${proBy(S.rol).n}.`:'Así lo ve la administración.');return;}
+  if(el.dataset.disp!==undefined){const P=yo(),d=el.dataset.disp,g=k=>(document.querySelector(`[data-disp="${d}"][data-k="${k}"]`)||{}).value||'';P.disp=P.disp||{};P.disp[d]=[[g('0a'),g('0b')],[g('1a'),g('1b')]].filter(r=>r[0]&&r[1]&&toMin(r[1])>toMin(r[0]));save();render();return;}
+  if(el.dataset.pdur){const P=yo(),v=Math.round(parseFloat(el.value)||0);if(v>=15){P.dur=v;save();render();}return;}
+  if(el.dataset.vereq){S.verEquipo=el.checked;render();return;}
+  if(el.dataset.imp&&el.files&&el.files[0]){const fr=new FileReader();fr.onload=()=>{$('imp-txt').value=fr.result;$('imp-res').innerHTML=impResHTML(parseImport(fr.result));};fr.readAsText(el.files[0]);return;}
+  if(el.dataset.nx&&S.nx){S.nx[el.dataset.nx]=el.value;return;}
+  if(el.dataset.pl){const P=planDe(el.dataset.pl),r=P[+el.dataset.i],k=el.dataset.k;if(el.dataset.j!==undefined){r.dias[+el.dataset.j][k]=k==='d'?+el.value:el.value;}else{r[k]=k==='frec'?+el.value:el.value;if(k==='area')r.proId=(S.pros.find(p=>p.area===el.value)||{}).id||'';if((k==='area'||k==='proId')&&r.proId)r.dias=autoDias(r.proId,r.frec);while(r.dias.length<r.frec)r.dias.push({d:5,h:'16:00'});}
+    if(el.dataset.j===undefined)planRedraw(el.dataset.pl);return;}
+  if(el.dataset.doc&&el.files&&el.files[0]){const p=pac(S.sel);p.docs[el.dataset.doc]={ok:true,t:Date.now(),archivo:el.files[0].name};save();render();toast('Cargado. En la versión real queda en la carpeta del paciente en Drive.');return;}
+  if(el.dataset.pct){const p=S.pros.find(x=>x.id===el.dataset.pct);p.pct=Math.min(100,Math.max(0,parseFloat(el.value)||0));save();render();return;}
+  if(el.dataset.ob){const o=S.obras.find(x=>x.id===el.dataset.ob);o[el.dataset.k]=el.dataset.k==='n'?el.value:Math.max(0,parseFloat(el.value)||0);save();return;}
+  if(el.dataset.obc){const o=S.obras.find(x=>x.id===el.dataset.obc);o[el.dataset.k]=el.checked;save();return;}
+  if(el.dataset.cfg){const k=el.dataset.cfg;S.cfg[k]=k==='admHoras'?el.value.split(',').map(x=>x.trim()).filter(x=>/^\d{1,2}:\d{2}$/.test(x)):Math.max(0,parseFloat(el.value)||0);save();return;}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))closeModal();});
+
+/* ---------- datos de ejemplo ---------- */
+function seed(){const hoy=new Date(),y=hoy.getFullYear();
+  S.cfg={valorParticular:24000,admDias:[2,4],admHoras:['17:00','17:45','18:30'],feriados:[]};
+  S.pros=[['to','Lic. Micaela Duarte','M.N. 4.512',70],['pp','Lic. Rocío Benítez','M.P. 21.330',70],['psi','Lic. Federico Gauna','M.N. 58.114',70],['fono','Lic. Agustina Paz','M.N. 6.208',70],['kine','Lic. Nahuel Ortiz','M.N. 11.906',65],['pm','Lic. Celeste Ramos','M.P. 3.417',65],['mt','Lic. Bruno Ferrari','M.P. 1.095',65],['et','Lic. Carolina Medina','M.N. 9.770',70]].map(([area,n,mat,pct],i)=>({id:'pro'+i,area,n,mat,pct}));
+  const pro=a=>S.pros.find(p=>p.area===a).id;
+  S.pros.forEach(p=>{p.dur=45;});
+  S.obras=[{id:'osde',n:'OSDE',valor:21000,codem:false,aut:false,prepaga:true},{id:'ioma',n:'IOMA',valor:14500,codem:false,aut:true,prepaga:false},{id:'osecac',n:'OSECAC',valor:16000,codem:true,aut:true,prepaga:false},{id:'swiss',n:'Swiss Medical',valor:20000,codem:false,aut:false,prepaga:true},{id:'ospe',n:'OSPE',valor:15500,codem:true,aut:false,prepaga:false}];
+  const P=[['Benjamín Sosa','2019-04-12','47.881.203','osecac','150 334 221/01','Carla Sosa','Mamá','1161230011','TEA',[['to',2,[[1,'15:00'],[3,'15:00']]],['fono',2,[[2,'16:00'],[4,'16:00']]]],300,'2027-03-10'],
+    ['Valentina Gómez','2017-09-02','45.120.887','osde','61 223 9900 2','Laura Gómez','Mamá','1162223344','TDAH',[['pp',2,[[2,'17:00'],[4,'17:00']]],['psi',1,[[5,'16:00']]]],240,'2026-12-20'],
+    ['Thiago Martínez','2020-01-25','49.003.556','ioma','49003556/02','Diego Martínez','Papá','1163334455','Retraso madurativo',[['et',2,[[1,'10:00'],[3,'10:00']]],['kine',2,[[2,'10:00'],[4,'10:00']]],['fono',1,[[5,'10:00']]]],200,'2027-08-01'],
+    ['Lola Fernández','2018-06-30','46.554.120','swiss','80 4412 9921','Paula Fernández','Mamá','1164445566','TEA',[['to',2,[[2,'15:00'],[4,'15:00']]],['mt',1,[[3,'17:00']]]],150,'2028-02-14'],
+    ['Joaquín Ruiz','2016-11-18','44.210.009','osecac','150 998 112/03','Marta Ruiz','Abuela','1165556677','Dislexia',[['pp',2,[[1,'17:00'],[3,'17:00']]]],120,''],
+    ['Emma Castro','2021-03-08','50.112.774','ospe','22 1104 5530','Sofía Castro','Mamá','1166667788','Hipotonía',[['kine',2,[[1,'11:00'],[3,'11:00']]],['pm',2,[[2,'11:00'],[4,'11:00']]]],90,'2027-05-30'],
+    ['Mateo López','2019-08-21','48.776.012','','','Javier López','Papá','1167778899','',[['psi',1,[[2,'18:00']]],['to',1,[[5,'15:00']]]],60,'']];
+  S.pacientes=P.map(([nombre,fnac,dni,osId,afiliado,familiar,parentesco,tel,dx,pl,dias,cud],i)=>{const alta=Date.now()-dias*86400000;const desde=ymd(new Date(alta)).slice(0,7);
+    const p={id:'pa'+i,nombre,fnac,dni,osId,afiliado,familiar,parentesco,tel,dx,cudVence:cud,alta,entNotas:'',prest:pl.map(([a,f,ds],j)=>({id:'pr'+i+'_'+j,area:a,proId:pro(a),frec:f,dias:ds.map(([d,h])=>({d,h})),desde:desde<y+'-01'?y+'-01':desde,hasta:y+'-12'})),docs:{}};
+    DOCS.forEach(([k])=>{if(rnd()<0.8||k==='orden')p.docs[k]={ok:true,t:alta+86400000*3};});if(!cud)delete p.docs.cud;return p;});
+  S.pros.forEach((P,i)=>{const oc=ocupados(P.id);const dias=new Set(oc.map(o=>o.d));[1,2,3,4,5].forEach(d=>{if(dias.size<4&&(d+i)%2===0)dias.add(d);});P.disp={};
+    dias.forEach(d=>{const del=oc.filter(o=>o.d===d);const man=del.some(o=>o.ini<13*60);P.disp[d]=man?[['09:00','12:45']].concat((i%2===0)?[['15:00','19:30']]:[]):[['14:30','19:30']];});});
+  // asistencia desde septiembre hasta ayer
+  const desde=y+'-09-01',ayer=ymd(addDays(hoy,-1));S.pacientes.forEach(p=>p.prest.forEach(pr=>sesionesDe(p,pr,desde,ayer).forEach(s=>{S.asis[akey(p.id,pr.id,s.f)]=rnd()<0.88?'P':'A';})));
+  // informes hechos
+  S.pacientes.forEach(p=>p.prest.forEach(pr=>cuatris(y).forEach(c=>{if(c.hasta<ymd(hoy)&&ymd(new Date(p.alta))<=c.hasta&&rnd()<0.85)S.informes[ikey(p.id,pr.id,y,c.i)]={t:parseYmd(c.hasta).getTime()-86400000*3,evo:'Buena adherencia al tratamiento. Se observan avances en los objetivos planteados.',obj:'Objetivos del período.',plan:'Continuar con la misma frecuencia.'};})));
+  const NOTAS={to:['Trabajamos planificación motora con circuito.','Buena tolerancia a texturas. Seguimos con integración sensorial.','Costó la transición al inicio; después se enganchó con la actividad.'],fono:['Trabajamos fonemas /r/ y /s/ con juego de cartas.','Mejoró la intención comunicativa. Más palabras espontáneas.','Ejercicios de praxias orofaciales.'],pp:['Lectura de palabras bisílabas con apoyo visual.','Trabajamos atención sostenida con juegos de mesa.'],psi:['Registro de emociones con semáforo. Buena participación.','Trabajamos tolerancia a la frustración.'],kine:['Fortalecimiento de tronco y equilibrio.','Marcha con obstáculos bajos.'],pm:['Juego simbólico y coordinación.'],mt:['Improvisación con percusión: buena respuesta.'],et:['Estimulación sensorial y sostén cefálico.']};
+  S.pacientes.forEach(p=>p.prest.forEach(pr=>{sesionesDe(p,pr,ymd(addDays(hoy,-21)),ymd(addDays(hoy,-1))).forEach(s=>{const k=akey(p.id,pr.id,s.f);if(S.asis[k]==='P'&&rnd()<0.7){const L=NOTAS[pr.area]||['Sesión sin novedades.'];S.hc.push({id:nid('n'),pid:p.id,prid:pr.id,proId:pr.proId,f:s.f,t:parseYmd(s.f).getTime()+19*3600000,texto:L[Math.floor(rnd()*L.length)]});}});}));
+  const mesAnt=mesMas(ymd(hoy).slice(0,7),-1);let n=0;S.pacientes.forEach(p=>p.prest.forEach(pr=>{if(n++%3===0)S.planillas[p.id+'|'+pr.id+'|'+mesAnt]={estado:'firmada',t:Date.now()};}));
+  S.pacientes.forEach((p,i)=>{const o=obraBy(p.osId);if((o.codem||o.aut)&&i%2===0)S.mensual[p.id+'|'+mesAnt]={t:Date.now()};});
+  S.presup[S.pacientes[1].id+'|'+(y+1)]={t:Date.now()-86400000*2};
+  const D=n=>Date.now()-n*3600000;const next=proxDiasAdm(3);
+  S.consultas=[
+   {id:'c1',t:D(5),familiar:'Romina Acosta',parentesco:'Mamá',tel:'1150001122',atiende:'Ivana',nino:'Bautista Acosta',fnac:'2021-07-14',busca:['fono','to'],dx:'TEA (en evaluación)',cud:'tramite',osId:'ioma',afiliado:'51223001/02',orden:'si',notas:'Lo deriva el pediatra. Preguntó si hay lugar los martes a la tarde.',estado:'nueva'},
+   {id:'c2',t:D(26),familiar:'Gustavo Herrera',parentesco:'Papá',tel:'1150002233',atiende:'Joni',nino:'Abril Herrera',fnac:'2018-02-03',busca:['pp'],dx:'',cud:'no',osId:'osde',afiliado:'61 555 7712 1',orden:'no',notas:'Dificultades en la lectura. La escuela sugirió consultar.',estado:'nueva'},
+   {id:'c3',t:D(70),familiar:'Natalia Ríos',parentesco:'Mamá',tel:'1150003344',atiende:'Ivana',nino:'Santino Ríos',fnac:'2019-10-10',busca:['to','psi'],dx:'TDAH',cud:'si',osId:'osecac',afiliado:'150 221 090/01',orden:'si',notas:'',estado:'agendada',ent:{f:next[0],h:'17:00'}},
+   {id:'c4',t:D(400),familiar:'Lucía Pereyra',parentesco:'Mamá',tel:'1150004455',atiende:'Joni',nino:'Felipe Pereyra',fnac:'2020-05-22',busca:['kine','pm'],dx:'Hipotonía',cud:'si',osId:'swiss',afiliado:'80 2210 7788',orden:'si',notas:'',estado:'espera',entNotas:'Necesita kinesiología 2 veces por semana a la mañana; hoy no hay horario.'},
+   {id:'c5',t:D(900),familiar:'Andrea Vega',parentesco:'Abuela/o',tel:'1150005566',atiende:'Ivana',nino:'Ciro Vega',fnac:'2015-12-01',busca:['psi'],dx:'',cud:'no',osId:'',afiliado:'',orden:'no',notas:'',estado:'no',entNotas:'Busca psicología para adolescentes. Motivo: se derivó a otro centro.'},
+   {id:'c6',t:D(60*24),familiar:'Paula Fernández',parentesco:'Mamá',tel:'1164445566',atiende:'Joni',nino:'Lola Fernández',fnac:'2018-06-30',busca:['to','mt'],dx:'TEA',cud:'si',osId:'swiss',afiliado:'80 4412 9921',orden:'si',notas:'',estado:'admitido',pacId:'pa3'}];
+  save();}
+if(!load())seed();
+render();
+
+})();
+</script>
+</body>
+</html>
